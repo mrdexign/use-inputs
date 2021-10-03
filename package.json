@@ -1,0 +1,21 @@
+{
+	"name": "use-form-logic",
+	"version": "1.0.0",
+	"description": "useful react hook for handling forms",
+	"main": "dist/index.js",
+	"license": "ISC",
+	"scripts": {
+		"build": "tsc"
+	},
+	"devDependencies": {
+		"@types/react": ">=17.0.5",
+		"@types/react-dom": ">=17.0.4",
+		"react": ">=17.0.2",
+		"react-dom": ">=17.0.2",
+		"typescript": ">=4.2.4"
+	},
+	"files": [
+		"/dist",
+		"package.json"
+	]
+}
