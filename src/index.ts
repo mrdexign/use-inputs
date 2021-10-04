@@ -1,7 +1,7 @@
-import useForm from './useForm/useForm';
-import { validation } from './useForm/formValidations';
-import * as FormTypes from './useForm/FormTypes';
+import useInputs from './useInputs/useInputs';
+import { validation } from './useInputs/Validations';
+import * as types from './useInputs/Types';
 
-export { validation, FormTypes };
+export { validation, types };
 
-export default useForm;
+export default useInputs;

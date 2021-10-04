@@ -1,16 +1,19 @@
+import * as Types from './Types';
+import { validation } from './Validations';
 import { useEffect, useState, useCallback } from 'react';
-import * as Types from './FormTypes';
-import { validation } from './formValidations';
 
-const useForm = (options?: Types.UseFormOptionsType) => {
-	const [isFormValid, setIsFormValid] = useState(false);
+const useInputs = (options?: Types.OptionsType) => {
+	const [isInputsValid, setIsInputsValid] = useState(false);
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
+
+	//? validity check of all values
+	useEffect(() => setIsInputsValid(Object.values(Inputs).every(i => i.validation?.isValid === true)), [Inputs]);
 
 	//? custom onChange
 	const onValueChange = useCallback(
 		(name: string, value: string = '', extra: object = {}) => {
 			const valid = { ...validation, ...options?.validation }?.[name];
-
+			3;
 			let isValid = true;
 			if (valid?.regex) isValid = isValid && valid?.regex?.test(value);
 			if (valid?.validator) isValid = isValid && valid?.validator(value);
@@ -37,16 +40,9 @@ const useForm = (options?: Types.UseFormOptionsType) => {
 		(event: React.ChangeEvent<HTMLInputElement>, extra: object = {}) => {
 			const name = event?.target?.name || 'unknown';
 			const value = event?.target?.value || '';
-			console.log(value);
 			onValueChange(name, value, extra);
 		},
 		[onValueChange]
-	);
-
-	//? validity check of all values
-	useEffect(
-		() => setIsFormValid(Object.values(Inputs).every(i => i.validation?.isValid === true)),
-		[Inputs]
 	);
 
 	//? add extra data to some input
@@ -72,8 +68,8 @@ const useForm = (options?: Types.UseFormOptionsType) => {
 		};
 	};
 
-	//? reset all form values
-	const resetFormValues = useCallback(
+	//? reset all inputs values
+	const resetInputs = useCallback(
 		(inputsName: Array<string> = []) => {
 			setInputs(state => {
 				const newState = { ...state };
@@ -92,13 +88,13 @@ const useForm = (options?: Types.UseFormOptionsType) => {
 	);
 
 	//? get an object of all inputs data
-	const getFormData = () => {
+	const getInputsData = useCallback(() => {
 		const data: any = {};
 		Object.entries(Inputs).forEach(e => (data[e[0]] = e[1]?.value));
 		return data;
-	};
+	}, [Inputs]);
 
-	//? register input element to useForm
+	//? register input element
 	//? <input {...register('myInput')} ></input>
 	const register = useCallback(
 		(name: string, extra: {} = {}, isRsuite: boolean = options?.isRsuite || false) => {
@@ -119,20 +115,20 @@ const useForm = (options?: Types.UseFormOptionsType) => {
 				...extra,
 			} as object;
 		},
-		[Inputs, onChange, onValueChange, options?.isRsuite]
+		[Inputs, onValueChange, options?.isRsuite]
 	);
 
 	return {
-		isDirty,
 		register,
-		validOf,
-		isFormValid,
 		Inputs,
 		setInputs,
-		getFormData,
-		resetFormValues,
+		isDirty,
+		validOf,
+		isInputsValid,
+		resetInputs,
+		getInputsData,
 		addExtra,
 	};
 };
 
-export default useForm;
+export default useInputs;

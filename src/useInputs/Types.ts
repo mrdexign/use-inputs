@@ -7,9 +7,9 @@ export type Validation = {
 	};
 };
 
-export type UseFormOptionsType = {
-	validation?: Validation;
+export type OptionsType = {
 	isRsuite?: boolean;
+	validation?: Validation;
 };
 
 export type TypeEvent = {
@@ -32,4 +32,4 @@ export type InputsType = {
 	[name: string]: InputType;
 };
 
-export default UseFormOptionsType;
+export default OptionsType;

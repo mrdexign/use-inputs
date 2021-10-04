@@ -1,4 +1,4 @@
-import { Validation } from './FormTypes';
+import { Validation } from './Types';
 
 export const validation: Validation = {
 	email: {

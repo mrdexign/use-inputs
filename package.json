@@ -1,9 +1,18 @@
 {
-	"name": "use-form-logic",
+	"name": "use-inputs",
 	"version": "1.0.1",
-	"description": "useful react hook for handling forms",
+	"description": "useful react hook for handling inputs",
 	"main": "dist/index.js",
 	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mrdexign/use-inputs.git"
+	},
+	"author": "amirhosein kheirallahzadeh (mrdexign)",
+	"bugs": {
+		"url": "https://github.com/mrdexign/use-inputs/issues"
+	},
+	"homepage": "https://github.com/mrdexign/use-inputs#readme",
 	"scripts": {
 		"build": "tsc"
 	},

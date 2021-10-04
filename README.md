@@ -1,6 +1,6 @@
-# useForm
+# useInputs
 
-## A useful react hook for managing forms & inputs
+## A useful react hook for managing inputs
 
 -   Great **flexibility** and super **easyToUse** :)))
 
@@ -9,23 +9,23 @@
 # Installation
 
 ```bash
-yarn add use-form-logic
+yarn add use-inputs
 ```
 
 Or if you prefer npm :
 
 ```bash
-npm i use-form-logic
+npm i use-inputs
 ```
 
 # Usage
 
 ```js
 import React from 'react';
-import useForm from 'use-form-logic';
+import useInputs from 'use-inputs';
 
 const App = () => {
-	const { register, Inputs } = useForm();
+	const { register, Inputs } = useInputs();
 	return (
 		<form>
 			<input {...register('name')} />
@@ -52,10 +52,10 @@ Adding validation to inputs :
 
 ```js
 import React from 'react';
-import useForm from 'use-form-logic';
+import useInputs from 'use-inputs';
 
 const App = () => {
-	const { register } = useForm({
+	const { register } = useInputs({
 		validation: {
 			email: {
 				regex: /^[\w._%+-]+@[\w-]+\.+.[A-Za-z]{2,}$/,
@@ -89,10 +89,10 @@ export default App;
 
 ```js
 import { Input } from 'rsuite';
-import useForm from 'use-form-logic';
+import useInputs from 'use-inputs';
 
 const App = () => {
-	const { register } = useForm({ isRsuite: true });
+	const { register } = useInputs({ isRsuite: true });
 	return (
 		<form>
 			<Input {...register('email')} />
@@ -110,20 +110,20 @@ export default App;
 
 ## below useful methods and objects ,
 
-## can be destructed ( const { **...** } = useForm() ) from useForm
+## can be destructed ( const { **...** } = useInputs() ) from useInputs
 
 <br>
 
 ```js
-register(); //register a new input to the hook
+register(name:string); //Register a new input to the hook
 ```
 
 ```js
-Inputs, setInputs(); //handling inputs states
+Inputs, setInputs(); //Handling inputs states
 ```
 
 ```ts
-isDirty(name:string); //return true if user modified the input
+isDirty(name:string); //Return true if user modified the input
 ```
 
 ```ts
@@ -144,16 +144,16 @@ validation.isValidDirty
 ```
 
 ```ts
-isFormValid; //If all inputs are valid it's true
+isInputsValid; //If all inputs are valid it's true
 ```
 
 ```ts
-resetFormValues(); // reset all inputs
+resetInputs(); // Reset all inputs
 ```
 
 ```ts
-getFormData();
-// get an object only including name and value of the inputs
+getInputsData();
+// Get an object only including name and value of the inputs
 
 {
 	//Example for code in usage section:
@@ -164,11 +164,11 @@ getFormData();
 ```
 
 ```ts
-addExtra(name:string,extra:object); // add extra data to the input
+addExtra(name:string,extra:object); // Add extra data to the input
 ```
 
 ⚠ **Attention**: If the **extra** object have property with below **keys** , it will overwrite the input state ,<br>
-so avoid using these key to extra object :
+so **avoid** using these **keys** to extra object :
 
 > **value** , **dirty** , **validation**
 

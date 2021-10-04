@@ -22,10 +22,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FormTypes = exports.validation = void 0;
-var useForm_1 = __importDefault(require("./useForm/useForm"));
-var formValidations_1 = require("./useForm/formValidations");
-Object.defineProperty(exports, "validation", { enumerable: true, get: function () { return formValidations_1.validation; } });
-var FormTypes = __importStar(require("./useForm/FormTypes"));
-exports.FormTypes = FormTypes;
-exports.default = useForm_1.default;
+exports.types = exports.validation = void 0;
+var useInputs_1 = __importDefault(require("./useInputs/useInputs"));
+var Validations_1 = require("./useInputs/Validations");
+Object.defineProperty(exports, "validation", { enumerable: true, get: function () { return Validations_1.validation; } });
+var types = __importStar(require("./useInputs/Types"));
+exports.types = types;
+exports.default = useInputs_1.default;

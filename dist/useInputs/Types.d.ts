@@ -7,9 +7,9 @@ export declare type Validation = {
         validator?: (value: string) => boolean;
     };
 };
-export declare type UseFormOptionsType = {
-    validation?: Validation;
+export declare type OptionsType = {
     isRsuite?: boolean;
+    validation?: Validation;
 };
 export declare type TypeEvent = {
     name?: string | number;
@@ -28,4 +28,4 @@ export declare type InputType = {
 export declare type InputsType = {
     [name: string]: InputType;
 };
-export default UseFormOptionsType;
+export default OptionsType;
