@@ -14,12 +14,17 @@ export type OptionsType = {
 
 export type TypeEvent = {
 	name?: string | number;
-	extra?: object;
+	extra?: extraType;
 	event: React.ChangeEvent<HTMLInputElement>;
+};
+
+export type extraType = {
+	defaultValue?: string;
 };
 
 export type InputType = {
 	value: string;
+	defaultValue?: string;
 	dirty: boolean;
 	validation?: {
 		errorMsg?: string;

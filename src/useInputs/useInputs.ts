@@ -1,19 +1,22 @@
 import * as Types from './Types';
 import { validation } from './Validations';
 import { useEffect, useState, useCallback } from 'react';
+import { extraType } from './Types';
 
 const useInputs = (options?: Types.OptionsType) => {
 	const [isInputsValid, setIsInputsValid] = useState(false);
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 
 	//? validity check of all values
-	useEffect(() => setIsInputsValid(Object.values(Inputs).every(i => i.validation?.isValid === true)), [Inputs]);
+	useEffect(
+		() => setIsInputsValid(Object.values(Inputs).every(i => i.validation?.isValid === true)),
+		[Inputs]
+	);
 
 	//? custom onChange
 	const onValueChange = useCallback(
-		(name: string, value: string = '', extra: object = {}) => {
+		(name: string, value: string = '', extra: extraType = {}) => {
 			const valid = { ...validation, ...options?.validation }?.[name];
-			3;
 			let isValid = true;
 			if (valid?.regex) isValid = isValid && valid?.regex?.test(value);
 			if (valid?.validator) isValid = isValid && valid?.validator(value);
@@ -37,7 +40,7 @@ const useInputs = (options?: Types.OptionsType) => {
 
 	//? custom onChange
 	const onChange = useCallback(
-		(event: React.ChangeEvent<HTMLInputElement>, extra: object = {}) => {
+		(event: React.ChangeEvent<HTMLInputElement>, extra: extraType = {}) => {
 			const name = event?.target?.name || 'unknown';
 			const value = event?.target?.value || '';
 			onValueChange(name, value, extra);
@@ -46,7 +49,7 @@ const useInputs = (options?: Types.OptionsType) => {
 	);
 
 	//? add extra data to some input
-	const addExtra = (name: string, extra: object) =>
+	const addExtra = (name: string, extra: extraType) =>
 		setInputs(state => ({
 			...state,
 			[name]: {
@@ -57,6 +60,9 @@ const useInputs = (options?: Types.OptionsType) => {
 
 	//? get dirty state of some input
 	const isDirty = (name: string) => Inputs?.[name]?.dirty;
+
+	//? return true if any dirty input exist
+	const isSomeDirty = () => Object.values(Inputs).some(i => i.dirty === true);
 
 	//? get validation info about some input
 	const validOf = (name: string) => {
@@ -97,22 +103,27 @@ const useInputs = (options?: Types.OptionsType) => {
 	//? register input element
 	//? <input {...register('myInput')} ></input>
 	const register = useCallback(
-		(name: string, extra: {} = {}, isRsuite: boolean = options?.isRsuite || false) => {
-			!Inputs[name] &&
-				setInputs(state => ({
-					...state,
-					[name]: {
-						value: '',
-						dirty: false,
-					},
-				}));
+		(name: string, extra: extraType = {}, isRsuite: boolean = options?.isRsuite || false) => {
+			const isInputEmpty = !Inputs[name];
+			const isDefaultValueUpdated = extra?.defaultValue !== Inputs[name]?.defaultValue;
+			if (isInputEmpty || isDefaultValueUpdated) {
+				setInputs(state => {
+					return {
+						...state,
+						[name]: {
+							value: extra?.defaultValue || '',
+							dirty: false,
+							...extra,
+						},
+					};
+				});
+			}
 			return {
 				name,
 				value: Inputs?.[name]?.value || '',
 				onChange: isRsuite
 					? (value: string) => onValueChange(name, value)
 					: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, extra),
-				...extra,
 			} as object;
 		},
 		[Inputs, onValueChange, options?.isRsuite]
@@ -123,6 +134,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		Inputs,
 		setInputs,
 		isDirty,
+		isSomeDirty,
 		validOf,
 		isInputsValid,
 		resetInputs,
