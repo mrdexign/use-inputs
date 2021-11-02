@@ -8,10 +8,7 @@ const useInputs = (options?: Types.OptionsType) => {
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 
 	//? validity check of all values
-	useEffect(
-		() => setIsInputsValid(Object.values(Inputs).every(i => i.validation?.isValid === true)),
-		[Inputs]
-	);
+	useEffect(() => setIsInputsValid(Object.values(Inputs).every(i => i.validation?.isValid === true)), [Inputs]);
 
 	//? custom onChange
 	const onValueChange = useCallback(
@@ -122,7 +119,7 @@ const useInputs = (options?: Types.OptionsType) => {
 				name,
 				value: Inputs?.[name]?.value || '',
 				onChange: isRsuite
-					? (value: string) => onValueChange(name, value)
+					? (value: string) => onValueChange(name, value, extra)
 					: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, extra),
 			} as object;
 		},

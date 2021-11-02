@@ -14,17 +14,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Validations_1 = require("./Validations");
 var react_1 = require("react");
 var useInputs = function (options) {
-    var _a = react_1.useState(false), isInputsValid = _a[0], setIsInputsValid = _a[1];
-    var _b = react_1.useState({}), Inputs = _b[0], setInputs = _b[1];
+    var _a = (0, react_1.useState)(false), isInputsValid = _a[0], setIsInputsValid = _a[1];
+    var _b = (0, react_1.useState)({}), Inputs = _b[0], setInputs = _b[1];
     //? validity check of all values
-    react_1.useEffect(function () { return setIsInputsValid(Object.values(Inputs).every(function (i) { var _a; return ((_a = i.validation) === null || _a === void 0 ? void 0 : _a.isValid) === true; })); }, [Inputs]);
+    (0, react_1.useEffect)(function () { return setIsInputsValid(Object.values(Inputs).every(function (i) { var _a; return ((_a = i.validation) === null || _a === void 0 ? void 0 : _a.isValid) === true; })); }, [Inputs]);
     //? custom onChange
-    var onValueChange = react_1.useCallback(function (name, value, extra) {
+    var onValueChange = (0, react_1.useCallback)(function (name, value, extra) {
         var _a, _b;
         if (value === void 0) { value = ''; }
         if (extra === void 0) { extra = {}; }
         var valid = (_a = __assign(__assign({}, Validations_1.validation), options === null || options === void 0 ? void 0 : options.validation)) === null || _a === void 0 ? void 0 : _a[name];
-        3;
         var isValid = true;
         if (valid === null || valid === void 0 ? void 0 : valid.regex)
             isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.regex) === null || _b === void 0 ? void 0 : _b.test(value));
@@ -41,7 +40,7 @@ var useInputs = function (options) {
         });
     }, [options === null || options === void 0 ? void 0 : options.validation]);
     //? custom onChange
-    var onChange = react_1.useCallback(function (event, extra) {
+    var onChange = (0, react_1.useCallback)(function (event, extra) {
         var _a, _b;
         if (extra === void 0) { extra = {}; }
         var name = ((_a = event === null || event === void 0 ? void 0 : event.target) === null || _a === void 0 ? void 0 : _a.name) || 'unknown';
@@ -57,6 +56,8 @@ var useInputs = function (options) {
     };
     //? get dirty state of some input
     var isDirty = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty; };
+    //? return true if any dirty input exist
+    var isSomeDirty = function () { return Object.values(Inputs).some(function (i) { return i.dirty === true; }); };
     //? get validation info about some input
     var validOf = function (name) {
         var _a, _b, _c, _d;
@@ -68,7 +69,7 @@ var useInputs = function (options) {
         };
     };
     //? reset all inputs values
-    var resetInputs = react_1.useCallback(function (inputsName) {
+    var resetInputs = (0, react_1.useCallback)(function (inputsName) {
         if (inputsName === void 0) { inputsName = []; }
         setInputs(function (state) {
             var newState = __assign({}, state);
@@ -80,34 +81,39 @@ var useInputs = function (options) {
         });
     }, [setInputs]);
     //? get an object of all inputs data
-    var getInputsData = react_1.useCallback(function () {
+    var getInputsData = (0, react_1.useCallback)(function () {
         var data = {};
         Object.entries(Inputs).forEach(function (e) { var _a; return (data[e[0]] = (_a = e[1]) === null || _a === void 0 ? void 0 : _a.value); });
         return data;
     }, [Inputs]);
     //? register input element
     //? <input {...register('myInput')} ></input>
-    var register = react_1.useCallback(function (name, extra, isRsuite) {
-        var _a;
+    var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
+        var _a, _b;
         if (extra === void 0) { extra = {}; }
         if (isRsuite === void 0) { isRsuite = (options === null || options === void 0 ? void 0 : options.isRsuite) || false; }
-        !Inputs[name] &&
+        var isInputEmpty = !Inputs[name];
+        var isDefaultValueUpdated = (extra === null || extra === void 0 ? void 0 : extra.defaultValue) !== ((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue);
+        if (isInputEmpty || isDefaultValueUpdated) {
             setInputs(function (state) {
                 var _a;
-                return (__assign(__assign({}, state), (_a = {}, _a[name] = {
-                    value: '',
-                    dirty: false,
-                }, _a)));
+                return __assign(__assign({}, state), (_a = {}, _a[name] = __assign({ value: (extra === null || extra === void 0 ? void 0 : extra.defaultValue) || '', dirty: false }, extra), _a));
             });
-        return __assign({ name: name, value: ((_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value) || '', onChange: isRsuite
-                ? function (value) { return onValueChange(name, value); }
-                : function (e) { return onChange(e, extra); } }, extra);
+        }
+        return {
+            name: name,
+            value: ((_b = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _b === void 0 ? void 0 : _b.value) || '',
+            onChange: isRsuite
+                ? function (value) { return onValueChange(name, value, extra); }
+                : function (e) { return onChange(e, extra); },
+        };
     }, [Inputs, onValueChange, options === null || options === void 0 ? void 0 : options.isRsuite]);
     return {
         register: register,
         Inputs: Inputs,
         setInputs: setInputs,
         isDirty: isDirty,
+        isSomeDirty: isSomeDirty,
         validOf: validOf,
         isInputsValid: isInputsValid,
         resetInputs: resetInputs,

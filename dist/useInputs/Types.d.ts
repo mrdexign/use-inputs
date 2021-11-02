@@ -13,11 +13,15 @@ export declare type OptionsType = {
 };
 export declare type TypeEvent = {
     name?: string | number;
-    extra?: object;
+    extra?: extraType;
     event: React.ChangeEvent<HTMLInputElement>;
+};
+export declare type extraType = {
+    defaultValue?: string;
 };
 export declare type InputType = {
     value: string;
+    defaultValue?: string;
     dirty: boolean;
     validation?: {
         errorMsg?: string;
