@@ -16,5 +16,8 @@ declare const useInputs: (options?: Types.OptionsType | undefined) => {
     resetInputs: (inputsName?: Array<string>) => void;
     getInputsData: () => any;
     addExtra: (name: string, extra: extraType) => void;
+    setAdditionalData: (name: string, data: any) => void;
+    setInputValue: (name: string, value: string) => void;
+    defaultValueOf: (name: string) => string | undefined;
 };
 export default useInputs;

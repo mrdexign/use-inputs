@@ -47,6 +47,22 @@ var useInputs = function (options) {
         var value = ((_b = event === null || event === void 0 ? void 0 : event.target) === null || _b === void 0 ? void 0 : _b.value) || '';
         onValueChange(name, value, extra);
     }, [onValueChange]);
+    var setInputValue = function (name, value) {
+        return setInputs(function (state) {
+            var _a;
+            return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign({}, state === null || state === void 0 ? void 0 : state[name]), { dirty: true, value: value }), _a)));
+        });
+    };
+    var setAdditionalData = function (name, data) {
+        return setInputs(function (state) {
+            var _a;
+            return (__assign(__assign({}, state), (_a = {}, _a[name] = {
+                dirty: true,
+                value: data,
+            }, _a)));
+        });
+    };
+    var defaultValueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue; };
     //? add extra data to some input
     var addExtra = function (name, extra) {
         return setInputs(function (state) {
@@ -74,8 +90,9 @@ var useInputs = function (options) {
         setInputs(function (state) {
             var newState = __assign({}, state);
             Object.keys(newState).forEach(function (name) {
+                var _a;
                 if (inputsName.length === 0 || inputsName.includes(name))
-                    newState[name] = __assign(__assign({}, state[name]), { value: '', dirty: false });
+                    newState[name] = __assign(__assign({}, state[name]), { value: ((_a = state === null || state === void 0 ? void 0 : state[name]) === null || _a === void 0 ? void 0 : _a.defaultValue) || '', dirty: false });
             });
             return newState;
         });
@@ -119,6 +136,9 @@ var useInputs = function (options) {
         resetInputs: resetInputs,
         getInputsData: getInputsData,
         addExtra: addExtra,
+        setAdditionalData: setAdditionalData,
+        setInputValue: setInputValue,
+        defaultValueOf: defaultValueOf,
     };
 };
 exports.default = useInputs;

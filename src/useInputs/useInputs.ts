@@ -45,6 +45,27 @@ const useInputs = (options?: Types.OptionsType) => {
 		[onValueChange]
 	);
 
+	const setInputValue = (name: string, value: string) =>
+		setInputs(state => ({
+			...state,
+			[name]: {
+				...state?.[name],
+				dirty: true,
+				value: value,
+			},
+		}));
+
+	const setAdditionalData = (name: string, data: any) =>
+		setInputs(state => ({
+			...state,
+			[name]: {
+				dirty: true,
+				value: data,
+			},
+		}));
+
+	const defaultValueOf = (name: string) => Inputs?.[name]?.defaultValue;
+
 	//? add extra data to some input
 	const addExtra = (name: string, extra: extraType) =>
 		setInputs(state => ({
@@ -80,7 +101,7 @@ const useInputs = (options?: Types.OptionsType) => {
 					if (inputsName.length === 0 || inputsName.includes(name))
 						newState[name] = {
 							...state[name],
-							value: '',
+							value: state?.[name]?.defaultValue || '',
 							dirty: false,
 						};
 				});
@@ -137,6 +158,9 @@ const useInputs = (options?: Types.OptionsType) => {
 		resetInputs,
 		getInputsData,
 		addExtra,
+		setAdditionalData,
+		setInputValue,
+		defaultValueOf,
 	};
 };
 
