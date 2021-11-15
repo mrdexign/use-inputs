@@ -15,9 +15,11 @@ declare const useInputs: (options?: Types.OptionsType | undefined) => {
     isInputsValid: boolean;
     resetInputs: (inputsName?: Array<string>) => void;
     getInputsData: () => any;
+    getDirtyInputsData: () => any;
     addExtra: (name: string, extra: extraType) => void;
     setAdditionalData: (name: string, data: any) => void;
     setInputValue: (name: string, value: string) => void;
     defaultValueOf: (name: string) => string | undefined;
+    valueOf: (name: string) => string;
 };
 export default useInputs;

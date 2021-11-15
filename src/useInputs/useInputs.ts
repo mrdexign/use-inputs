@@ -64,6 +64,8 @@ const useInputs = (options?: Types.OptionsType) => {
 			},
 		}));
 
+	const valueOf = (name: string) => Inputs?.[name]?.value;
+
 	const defaultValueOf = (name: string) => Inputs?.[name]?.defaultValue;
 
 	//? add extra data to some input
@@ -118,6 +120,15 @@ const useInputs = (options?: Types.OptionsType) => {
 		return data;
 	}, [Inputs]);
 
+	//? get an object of all dirty inputs data
+	const getDirtyInputsData = useCallback(() => {
+		const data: any = {};
+		Object.entries(Inputs)
+			.filter(i => i[1].dirty === true)
+			.forEach(e => (data[e[0]] = e[1]?.value));
+		return data;
+	}, [Inputs]);
+
 	//? register input element
 	//? <input {...register('myInput')} ></input>
 	const register = useCallback(
@@ -157,10 +168,12 @@ const useInputs = (options?: Types.OptionsType) => {
 		isInputsValid,
 		resetInputs,
 		getInputsData,
+		getDirtyInputsData,
 		addExtra,
 		setAdditionalData,
 		setInputValue,
 		defaultValueOf,
+		valueOf,
 	};
 };
 

@@ -62,6 +62,7 @@ var useInputs = function (options) {
             }, _a)));
         });
     };
+    var valueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value; };
     var defaultValueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue; };
     //? add extra data to some input
     var addExtra = function (name, extra) {
@@ -103,6 +104,14 @@ var useInputs = function (options) {
         Object.entries(Inputs).forEach(function (e) { var _a; return (data[e[0]] = (_a = e[1]) === null || _a === void 0 ? void 0 : _a.value); });
         return data;
     }, [Inputs]);
+    //? get an object of all dirty inputs data
+    var getDirtyInputsData = (0, react_1.useCallback)(function () {
+        var data = {};
+        Object.entries(Inputs)
+            .filter(function (i) { return i[1].dirty === true; })
+            .forEach(function (e) { var _a; return (data[e[0]] = (_a = e[1]) === null || _a === void 0 ? void 0 : _a.value); });
+        return data;
+    }, [Inputs]);
     //? register input element
     //? <input {...register('myInput')} ></input>
     var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
@@ -135,10 +144,12 @@ var useInputs = function (options) {
         isInputsValid: isInputsValid,
         resetInputs: resetInputs,
         getInputsData: getInputsData,
+        getDirtyInputsData: getDirtyInputsData,
         addExtra: addExtra,
         setAdditionalData: setAdditionalData,
         setInputValue: setInputValue,
         defaultValueOf: defaultValueOf,
+        valueOf: valueOf,
     };
 };
 exports.default = useInputs;
