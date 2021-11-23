@@ -17,7 +17,14 @@ var useInputs = function (options) {
     var _a = (0, react_1.useState)(false), isInputsValid = _a[0], setIsInputsValid = _a[1];
     var _b = (0, react_1.useState)({}), Inputs = _b[0], setInputs = _b[1];
     //? validity check of all values
-    (0, react_1.useEffect)(function () { return setIsInputsValid(Object.values(Inputs).every(function (i) { var _a; return ((_a = i.validation) === null || _a === void 0 ? void 0 : _a.isValid) === true; })); }, [Inputs]);
+    (0, react_1.useEffect)(function () {
+        return setIsInputsValid(Object.values(Inputs).every(function (i) {
+            var _a;
+            if (!(i === null || i === void 0 ? void 0 : i.validation) || Object.keys(i === null || i === void 0 ? void 0 : i.validation).length === 0)
+                return true;
+            return (_a = i === null || i === void 0 ? void 0 : i.validation) === null || _a === void 0 ? void 0 : _a.isValid;
+        }));
+    }, [Inputs]);
     //? custom onChange
     var onValueChange = (0, react_1.useCallback)(function (name, value, extra) {
         var _a, _b;
@@ -98,6 +105,12 @@ var useInputs = function (options) {
             return newState;
         });
     }, [setInputs]);
+    //? get inputs default values
+    var getDefaultInputsData = (0, react_1.useCallback)(function () {
+        var data = {};
+        Object.entries(Inputs).forEach(function (e) { var _a; return (data[e[0]] = (_a = e[1]) === null || _a === void 0 ? void 0 : _a.defaultValue); });
+        return data;
+    }, [Inputs]);
     //? get an object of all inputs data
     var getInputsData = (0, react_1.useCallback)(function () {
         var data = {};
@@ -109,7 +122,7 @@ var useInputs = function (options) {
         var data = {};
         Object.entries(Inputs)
             .filter(function (i) { return i[1].dirty === true; })
-            .forEach(function (e) { var _a; return (data[e[0]] = (_a = e[1]) === null || _a === void 0 ? void 0 : _a.value); });
+            .forEach(function (e) { var _a; return (data[e[0]] = ((_a = e[1]) === null || _a === void 0 ? void 0 : _a.value) || ''); });
         return data;
     }, [Inputs]);
     //? register input element
@@ -149,6 +162,7 @@ var useInputs = function (options) {
         setAdditionalData: setAdditionalData,
         setInputValue: setInputValue,
         defaultValueOf: defaultValueOf,
+        getDefaultInputsData: getDefaultInputsData,
         valueOf: valueOf,
     };
 };

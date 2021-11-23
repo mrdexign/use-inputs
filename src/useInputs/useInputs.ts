@@ -8,7 +8,16 @@ const useInputs = (options?: Types.OptionsType) => {
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 
 	//? validity check of all values
-	useEffect(() => setIsInputsValid(Object.values(Inputs).every(i => i.validation?.isValid === true)), [Inputs]);
+	useEffect(
+		() =>
+			setIsInputsValid(
+				Object.values(Inputs).every(i => {
+					if (!i?.validation || Object.keys(i?.validation).length === 0) return true;
+					return i?.validation?.isValid;
+				})
+			),
+		[Inputs]
+	);
 
 	//? custom onChange
 	const onValueChange = useCallback(
@@ -113,6 +122,13 @@ const useInputs = (options?: Types.OptionsType) => {
 		[setInputs]
 	);
 
+	//? get inputs default values
+	const getDefaultInputsData = useCallback(() => {
+		const data: any = {};
+		Object.entries(Inputs).forEach(e => (data[e[0]] = e[1]?.defaultValue));
+		return data;
+	}, [Inputs]);
+
 	//? get an object of all inputs data
 	const getInputsData = useCallback(() => {
 		const data: any = {};
@@ -125,7 +141,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		const data: any = {};
 		Object.entries(Inputs)
 			.filter(i => i[1].dirty === true)
-			.forEach(e => (data[e[0]] = e[1]?.value));
+			.forEach(e => (data[e[0]] = e[1]?.value || ''));
 		return data;
 	}, [Inputs]);
 
@@ -173,6 +189,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		setAdditionalData,
 		setInputValue,
 		defaultValueOf,
+		getDefaultInputsData,
 		valueOf,
 	};
 };
