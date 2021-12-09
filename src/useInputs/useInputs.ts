@@ -70,15 +70,27 @@ const useInputs = (options?: Types.OptionsType) => {
 		[onValueChange]
 	);
 
-	const setInputValue = (name: string, value: string) =>
-		setInputs(state => ({
+	const setInputValue = (name: string, value: string) => {
+		const isValid = validateInput(name, value);
+		const validation = options?.validation?.[name];
+		return setInputs(state => ({
 			...state,
 			[name]: {
 				...state?.[name],
 				dirty: true,
 				value: value,
+				...(validation
+					? {
+							validation: {
+								isValid,
+								required: validation.required,
+								errorMsg: isValid ? '' : validation.errorMsg,
+							},
+					  }
+					: {}),
 			},
 		}));
+	};
 
 	const setAdditionalData = (name: string, data: any) =>
 		setInputs(state => ({

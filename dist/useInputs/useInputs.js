@@ -73,9 +73,20 @@ var useInputs = function (options) {
         onValueChange(name, value, extra);
     }, [onValueChange]);
     var setInputValue = function (name, value) {
+        var _a;
+        var isValid = validateInput(name, value);
+        var validation = (_a = options === null || options === void 0 ? void 0 : options.validation) === null || _a === void 0 ? void 0 : _a[name];
         return setInputs(function (state) {
             var _a;
-            return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign({}, state === null || state === void 0 ? void 0 : state[name]), { dirty: true, value: value }), _a)));
+            return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign(__assign({}, state === null || state === void 0 ? void 0 : state[name]), { dirty: true, value: value }), (validation
+                ? {
+                    validation: {
+                        isValid: isValid,
+                        required: validation.required,
+                        errorMsg: isValid ? '' : validation.errorMsg,
+                    },
+                }
+                : {})), _a)));
         });
     };
     var setAdditionalData = function (name, data) {
