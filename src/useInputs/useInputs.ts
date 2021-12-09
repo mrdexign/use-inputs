@@ -7,13 +7,22 @@ const useInputs = (options?: Types.OptionsType) => {
 	const [isInputsValid, setIsInputsValid] = useState(false);
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 
+	const validateInput = (name: string, value: string): boolean => {
+		let isValid = true;
+		const valid = { ...validation, ...options?.validation }?.[name];
+		if (valid?.regex) isValid = isValid && valid?.regex?.test(value);
+		if (valid?.validator) isValid = isValid && valid?.validator(value);
+		if (valid?.required) isValid = isValid && value !== '';
+		return isValid;
+	};
+
 	//? validity check of all values
 	useEffect(
 		() =>
 			setIsInputsValid(
 				Object.values(Inputs).every(i => {
 					if (!i?.validation || Object.keys(i?.validation).length === 0) return true;
-					return i?.validation?.isValid;
+					return !!i?.validation?.isValid;
 				})
 			),
 		[Inputs]
@@ -23,10 +32,16 @@ const useInputs = (options?: Types.OptionsType) => {
 	const onValueChange = useCallback(
 		(name: string, value: string = '', extra: extraType = {}) => {
 			const valid = { ...validation, ...options?.validation }?.[name];
-			let isValid = true;
-			if (valid?.regex) isValid = isValid && valid?.regex?.test(value);
-			if (valid?.validator) isValid = isValid && valid?.validator(value);
-			if (valid?.required) isValid = isValid && value !== '';
+
+			const validCharType = valid?.validChars;
+			if (validCharType) {
+				if (validCharType instanceof RegExp && !validCharType.test(value)) return;
+				else if (validCharType === '+number' && !/^[0-9]*[.]?[0-9]*$/.test(value)) return;
+				else if (validCharType === 'number' && !/^(\-|\+)?[0-9]*[.]?[0-9]*$/.test(value)) return;
+				else if (validCharType === 'alphabet' && !/^[a-zA-Z\s]*$/.test(value)) return;
+			}
+
+			let isValid = validateInput(name, value);
 
 			setInputs(state => ({
 				...state,
@@ -35,6 +50,7 @@ const useInputs = (options?: Types.OptionsType) => {
 					value: value,
 					validation: {
 						isValid,
+						required: valid?.required,
 						errorMsg: isValid ? '' : valid?.errorMsg,
 					},
 					...extra,
@@ -112,8 +128,8 @@ const useInputs = (options?: Types.OptionsType) => {
 					if (inputsName.length === 0 || inputsName.includes(name))
 						newState[name] = {
 							...state[name],
-							value: state?.[name]?.defaultValue || '',
 							dirty: false,
+							value: state?.[name]?.defaultValue || '',
 						};
 				});
 				return newState;
@@ -153,12 +169,24 @@ const useInputs = (options?: Types.OptionsType) => {
 			const isDefaultValueUpdated = extra?.defaultValue !== Inputs[name]?.defaultValue;
 			if (isInputEmpty || isDefaultValueUpdated) {
 				setInputs(state => {
+					const value = extra?.defaultValue || '';
+					const validation = options?.validation?.[name];
+					const isValid = validateInput(name, value);
 					return {
 						...state,
 						[name]: {
-							value: extra?.defaultValue || '',
+							value,
 							dirty: false,
 							...extra,
+							...(validation
+								? {
+										validation: {
+											isValid,
+											required: validation.required,
+											errorMsg: isValid ? '' : validation.errorMsg,
+										},
+								  }
+								: {}),
 						},
 					};
 				});

@@ -4,6 +4,7 @@ export type Validation = {
 		errorMsg?: string;
 		required?: boolean;
 		validator?: (value: string) => boolean;
+		validChars?: 'number' | '+number' | 'alphabet' | RegExp;
 	};
 };
 

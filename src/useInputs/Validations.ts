@@ -2,7 +2,7 @@ import { Validation } from './Types';
 
 export const validation: Validation = {
 	email: {
-		regex: /^[\w._%+-]+@[\w-]+\.+.[A-Za-z]{2,}$/,
+		regex: /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
 		errorMsg: 'email is invalid',
 	},
 	phone: {

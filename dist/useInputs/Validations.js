@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validation = void 0;
 exports.validation = {
     email: {
-        regex: /^[\w._%+-]+@[\w-]+\.+.[A-Za-z]{2,}$/,
+        regex: /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
         errorMsg: 'email is invalid',
     },
     phone: {

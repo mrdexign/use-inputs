@@ -16,32 +16,50 @@ var react_1 = require("react");
 var useInputs = function (options) {
     var _a = (0, react_1.useState)(false), isInputsValid = _a[0], setIsInputsValid = _a[1];
     var _b = (0, react_1.useState)({}), Inputs = _b[0], setInputs = _b[1];
-    //? validity check of all values
-    (0, react_1.useEffect)(function () {
-        return setIsInputsValid(Object.values(Inputs).every(function (i) {
-            var _a;
-            if (!(i === null || i === void 0 ? void 0 : i.validation) || Object.keys(i === null || i === void 0 ? void 0 : i.validation).length === 0)
-                return true;
-            return (_a = i === null || i === void 0 ? void 0 : i.validation) === null || _a === void 0 ? void 0 : _a.isValid;
-        }));
-    }, [Inputs]);
-    //? custom onChange
-    var onValueChange = (0, react_1.useCallback)(function (name, value, extra) {
+    var validateInput = function (name, value) {
         var _a, _b;
-        if (value === void 0) { value = ''; }
-        if (extra === void 0) { extra = {}; }
-        var valid = (_a = __assign(__assign({}, Validations_1.validation), options === null || options === void 0 ? void 0 : options.validation)) === null || _a === void 0 ? void 0 : _a[name];
         var isValid = true;
+        var valid = (_a = __assign(__assign({}, Validations_1.validation), options === null || options === void 0 ? void 0 : options.validation)) === null || _a === void 0 ? void 0 : _a[name];
         if (valid === null || valid === void 0 ? void 0 : valid.regex)
             isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.regex) === null || _b === void 0 ? void 0 : _b.test(value));
         if (valid === null || valid === void 0 ? void 0 : valid.validator)
             isValid = isValid && (valid === null || valid === void 0 ? void 0 : valid.validator(value));
         if (valid === null || valid === void 0 ? void 0 : valid.required)
             isValid = isValid && value !== '';
+        return isValid;
+    };
+    //? validity check of all values
+    (0, react_1.useEffect)(function () {
+        return setIsInputsValid(Object.values(Inputs).every(function (i) {
+            var _a;
+            if (!(i === null || i === void 0 ? void 0 : i.validation) || Object.keys(i === null || i === void 0 ? void 0 : i.validation).length === 0)
+                return true;
+            return !!((_a = i === null || i === void 0 ? void 0 : i.validation) === null || _a === void 0 ? void 0 : _a.isValid);
+        }));
+    }, [Inputs]);
+    //? custom onChange
+    var onValueChange = (0, react_1.useCallback)(function (name, value, extra) {
+        var _a;
+        if (value === void 0) { value = ''; }
+        if (extra === void 0) { extra = {}; }
+        var valid = (_a = __assign(__assign({}, Validations_1.validation), options === null || options === void 0 ? void 0 : options.validation)) === null || _a === void 0 ? void 0 : _a[name];
+        var validCharType = valid === null || valid === void 0 ? void 0 : valid.validChars;
+        if (validCharType) {
+            if (validCharType instanceof RegExp && !validCharType.test(value))
+                return;
+            else if (validCharType === '+number' && !/^[0-9]*[.]?[0-9]*$/.test(value))
+                return;
+            else if (validCharType === 'number' && !/^(\-|\+)?[0-9]*[.]?[0-9]*$/.test(value))
+                return;
+            else if (validCharType === 'alphabet' && !/^[a-zA-Z\s]*$/.test(value))
+                return;
+        }
+        var isValid = validateInput(name, value);
         setInputs(function (state) {
             var _a;
             return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign({ dirty: true, value: value, validation: {
                     isValid: isValid,
+                    required: valid === null || valid === void 0 ? void 0 : valid.required,
                     errorMsg: isValid ? '' : valid === null || valid === void 0 ? void 0 : valid.errorMsg,
                 } }, extra), _a)));
         });
@@ -100,7 +118,7 @@ var useInputs = function (options) {
             Object.keys(newState).forEach(function (name) {
                 var _a;
                 if (inputsName.length === 0 || inputsName.includes(name))
-                    newState[name] = __assign(__assign({}, state[name]), { value: ((_a = state === null || state === void 0 ? void 0 : state[name]) === null || _a === void 0 ? void 0 : _a.defaultValue) || '', dirty: false });
+                    newState[name] = __assign(__assign({}, state[name]), { dirty: false, value: ((_a = state === null || state === void 0 ? void 0 : state[name]) === null || _a === void 0 ? void 0 : _a.defaultValue) || '' });
             });
             return newState;
         });
@@ -136,7 +154,19 @@ var useInputs = function (options) {
         if (isInputEmpty || isDefaultValueUpdated) {
             setInputs(function (state) {
                 var _a;
-                return __assign(__assign({}, state), (_a = {}, _a[name] = __assign({ value: (extra === null || extra === void 0 ? void 0 : extra.defaultValue) || '', dirty: false }, extra), _a));
+                var _b;
+                var value = (extra === null || extra === void 0 ? void 0 : extra.defaultValue) || '';
+                var validation = (_b = options === null || options === void 0 ? void 0 : options.validation) === null || _b === void 0 ? void 0 : _b[name];
+                var isValid = validateInput(name, value);
+                return __assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign({ value: value, dirty: false }, extra), (validation
+                    ? {
+                        validation: {
+                            isValid: isValid,
+                            required: validation.required,
+                            errorMsg: isValid ? '' : validation.errorMsg,
+                        },
+                    }
+                    : {})), _a));
             });
         }
         return {
