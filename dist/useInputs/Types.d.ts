@@ -18,7 +18,9 @@ export declare type TypeEvent = {
     event: React.ChangeEvent<HTMLInputElement>;
 };
 export declare type extraType = {
+    isRsuite?: boolean;
     defaultValue?: string;
+    validChars?: 'number' | '+number' | 'alphabet' | RegExp;
 };
 export declare type InputType = {
     value: string;

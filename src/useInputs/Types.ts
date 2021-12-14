@@ -20,7 +20,9 @@ export type TypeEvent = {
 };
 
 export type extraType = {
+	isRsuite?: boolean;
 	defaultValue?: string;
+	validChars?: 'number' | '+number' | 'alphabet' | RegExp;
 };
 
 export type InputType = {

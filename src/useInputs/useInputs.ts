@@ -33,7 +33,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		(name: string, value: string = '', extra: extraType = {}) => {
 			const valid = { ...validation, ...options?.validation }?.[name];
 
-			const validCharType = valid?.validChars;
+			const validCharType = extra?.validChars || valid?.validChars;
 			if (validCharType) {
 				if (validCharType instanceof RegExp && !validCharType.test(value)) return;
 				else if (validCharType === '+number' && !/^[0-9]*[.]?[0-9]*$/.test(value)) return;
@@ -206,9 +206,10 @@ const useInputs = (options?: Types.OptionsType) => {
 			return {
 				name,
 				value: Inputs?.[name]?.value || '',
-				onChange: isRsuite
-					? (value: string) => onValueChange(name, value, extra)
-					: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, extra),
+				onChange:
+					isRsuite || !!extra?.isRsuite
+						? (value: string) => onValueChange(name, value, extra)
+						: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, extra),
 			} as object;
 		},
 		[Inputs, onValueChange, options?.isRsuite]

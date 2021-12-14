@@ -43,7 +43,7 @@ var useInputs = function (options) {
         if (value === void 0) { value = ''; }
         if (extra === void 0) { extra = {}; }
         var valid = (_a = __assign(__assign({}, Validations_1.validation), options === null || options === void 0 ? void 0 : options.validation)) === null || _a === void 0 ? void 0 : _a[name];
-        var validCharType = valid === null || valid === void 0 ? void 0 : valid.validChars;
+        var validCharType = (extra === null || extra === void 0 ? void 0 : extra.validChars) || (valid === null || valid === void 0 ? void 0 : valid.validChars);
         if (validCharType) {
             if (validCharType instanceof RegExp && !validCharType.test(value))
                 return;
@@ -183,7 +183,7 @@ var useInputs = function (options) {
         return {
             name: name,
             value: ((_b = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _b === void 0 ? void 0 : _b.value) || '',
-            onChange: isRsuite
+            onChange: isRsuite || !!(extra === null || extra === void 0 ? void 0 : extra.isRsuite)
                 ? function (value) { return onValueChange(name, value, extra); }
                 : function (e) { return onChange(e, extra); },
         };
