@@ -72,6 +72,7 @@ var useInputs = function (options) {
         var value = ((_b = event === null || event === void 0 ? void 0 : event.target) === null || _b === void 0 ? void 0 : _b.value) || '';
         onValueChange(name, value, extra);
     }, [onValueChange]);
+    //? set Input value manually
     var setInputValue = function (name, value) {
         var _a;
         var isValid = validateInput(name, value);
@@ -89,6 +90,7 @@ var useInputs = function (options) {
                 : {})), _a)));
         });
     };
+    //?set additional data to Inputs
     var setAdditionalData = function (name, data) {
         return setInputs(function (state) {
             var _a;
@@ -98,19 +100,23 @@ var useInputs = function (options) {
             }, _a)));
         });
     };
+    //? get value of some input
     var valueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value; };
+    //? get default value of some input
     var defaultValueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue; };
     //? add extra data to some input
     var addExtra = function (name, extra) {
         return setInputs(function (state) {
             var _a;
-            return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign({}, state[name]), extra), _a)));
+            return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign({}, state === null || state === void 0 ? void 0 : state[name]), extra), _a)));
         });
     };
     //? get dirty state of some input
     var isDirty = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty; };
     //? return true if any dirty input exist
-    var isSomeDirty = function () { return Object.values(Inputs).some(function (i) { return i.dirty === true; }); };
+    var isSomeDirty = Object.values(Inputs).some(function (i) { return i.dirty === true; });
+    //? return true if any inputs value changed
+    var isSomeModified = Object.values(Inputs).some(function (i) { return i.value !== (i.defaultValue === undefined ? '' : i.defaultValue); });
     //? get validation info about some input
     var validOf = function (name) {
         var _a, _b, _c, _d;
@@ -189,22 +195,23 @@ var useInputs = function (options) {
         };
     }, [Inputs, onValueChange, options === null || options === void 0 ? void 0 : options.isRsuite]);
     return {
-        register: register,
         Inputs: Inputs,
-        setInputs: setInputs,
-        isDirty: isDirty,
-        isSomeDirty: isSomeDirty,
         validOf: validOf,
-        isInputsValid: isInputsValid,
-        resetInputs: resetInputs,
-        getInputsData: getInputsData,
-        getDirtyInputsData: getDirtyInputsData,
-        addExtra: addExtra,
-        setAdditionalData: setAdditionalData,
-        setInputValue: setInputValue,
-        defaultValueOf: defaultValueOf,
-        getDefaultInputsData: getDefaultInputsData,
         valueOf: valueOf,
+        isDirty: isDirty,
+        addExtra: addExtra,
+        register: register,
+        setInputs: setInputs,
+        resetInputs: resetInputs,
+        isSomeDirty: isSomeDirty,
+        getInputsData: getInputsData,
+        setInputValue: setInputValue,
+        isInputsValid: isInputsValid,
+        defaultValueOf: defaultValueOf,
+        isSomeModified: isSomeModified,
+        setAdditionalData: setAdditionalData,
+        getDirtyInputsData: getDirtyInputsData,
+        getDefaultInputsData: getDefaultInputsData,
     };
 };
 exports.default = useInputs;

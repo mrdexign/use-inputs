@@ -1,5 +1,6 @@
 export type Validation = {
 	[name: string]: {
+		mask?: string;
 		regex?: RegExp;
 		errorMsg?: string;
 		required?: boolean;

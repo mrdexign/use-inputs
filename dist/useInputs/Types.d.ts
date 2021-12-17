@@ -1,6 +1,7 @@
 /// <reference types="react" />
 export declare type Validation = {
     [name: string]: {
+        mask?: string;
         regex?: RegExp;
         errorMsg?: string;
         required?: boolean;

@@ -1,7 +1,7 @@
 import * as Types from './Types';
+import { extraType } from './Types';
 import { validation } from './Validations';
 import { useEffect, useState, useCallback } from 'react';
-import { extraType } from './Types';
 
 const useInputs = (options?: Types.OptionsType) => {
 	const [isInputsValid, setIsInputsValid] = useState(false);
@@ -70,6 +70,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		[onValueChange]
 	);
 
+	//? set Input value manually
 	const setInputValue = (name: string, value: string) => {
 		const isValid = validateInput(name, value);
 		const validation = options?.validation?.[name];
@@ -92,6 +93,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		}));
 	};
 
+	//?set additional data to Inputs
 	const setAdditionalData = (name: string, data: any) =>
 		setInputs(state => ({
 			...state,
@@ -101,8 +103,10 @@ const useInputs = (options?: Types.OptionsType) => {
 			},
 		}));
 
+	//? get value of some input
 	const valueOf = (name: string) => Inputs?.[name]?.value;
 
+	//? get default value of some input
 	const defaultValueOf = (name: string) => Inputs?.[name]?.defaultValue;
 
 	//? add extra data to some input
@@ -110,7 +114,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		setInputs(state => ({
 			...state,
 			[name]: {
-				...state[name],
+				...state?.[name],
 				...extra,
 			},
 		}));
@@ -119,7 +123,10 @@ const useInputs = (options?: Types.OptionsType) => {
 	const isDirty = (name: string) => Inputs?.[name]?.dirty;
 
 	//? return true if any dirty input exist
-	const isSomeDirty = () => Object.values(Inputs).some(i => i.dirty === true);
+	const isSomeDirty = Object.values(Inputs).some(i => i.dirty === true);
+
+	//? return true if any inputs value changed
+	const isSomeModified = Object.values(Inputs).some(i => i.value !== (i.defaultValue === undefined ? '' : i.defaultValue));
 
 	//? get validation info about some input
 	const validOf = (name: string) => {
@@ -203,6 +210,7 @@ const useInputs = (options?: Types.OptionsType) => {
 					};
 				});
 			}
+
 			return {
 				name,
 				value: Inputs?.[name]?.value || '',
@@ -216,22 +224,23 @@ const useInputs = (options?: Types.OptionsType) => {
 	);
 
 	return {
-		register,
 		Inputs,
-		setInputs,
-		isDirty,
-		isSomeDirty,
 		validOf,
-		isInputsValid,
-		resetInputs,
-		getInputsData,
-		getDirtyInputsData,
-		addExtra,
-		setAdditionalData,
-		setInputValue,
-		defaultValueOf,
-		getDefaultInputsData,
 		valueOf,
+		isDirty,
+		addExtra,
+		register,
+		setInputs,
+		resetInputs,
+		isSomeDirty,
+		getInputsData,
+		setInputValue,
+		isInputsValid,
+		defaultValueOf,
+		isSomeModified,
+		setAdditionalData,
+		getDirtyInputsData,
+		getDefaultInputsData,
 	};
 };
 
