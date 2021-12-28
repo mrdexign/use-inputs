@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import * as Types from './Types';
-import { extraType, KeyPressCallbackType as KeyDownCallbackType } from './Types';
+import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Types';
 declare const useInputs: (options?: Types.OptionsType | undefined) => {
     Inputs: Types.InputsType;
     validOf: (name: string) => {
@@ -20,7 +20,8 @@ declare const useInputs: (options?: Types.OptionsType | undefined) => {
     isInputsValid: boolean;
     defaultValueOf: (name: string) => string | undefined;
     isSomeModified: boolean;
-    onInputKeyDown: (callback: KeyDownCallbackType, keyCode?: string | undefined) => void;
+    onInputKeyDown: (callback: InputKeyDownCallbackType, keyCode?: string | undefined) => void;
+    onWindowKeyDown: (callback: KeyDownCallbackType, keyCode?: string | undefined) => void;
     setAdditionalData: (name: string, data: any) => void;
     getDirtyInputsData: () => any;
     getDefaultInputsData: () => any;

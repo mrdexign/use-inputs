@@ -1,5 +1,5 @@
 import * as Types from './Types';
-import { extraType, KeyPressCallbackType as KeyDownCallbackType } from './Types';
+import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Types';
 import { validation } from './Validations';
 import { useEffect, useState, useCallback, useRef } from 'react';
 
@@ -180,16 +180,32 @@ const useInputs = (options?: Types.OptionsType) => {
 		return data;
 	}, [Inputs]);
 
-	//? key press listeners
+	//?------------------------- key listeners --------------------------------
 	type KeyCodes = string;
-	const keyCallbacks = useRef<{ cb: KeyDownCallbackType; code?: KeyCodes }[]>([]);
-	const onKeyDownHandler = (e: KeyboardEvent, name: string) =>
-		keyCallbacks.current.forEach(
+	const windowKeyCallbacks = useRef<{ cb: (event?: KeyboardEvent | undefined) => any; code?: KeyCodes }[]>([]);
+	const onWindowKeyDownHandler = (e: KeyboardEvent) => {
+		windowKeyCallbacks.current.forEach(
+			({ cb, code }) => (code === undefined || code?.toLowerCase?.() === e?.code?.toLowerCase?.()) && cb(e)
+		);
+	};
+	const onWindowKeyDown = useCallback((callback: KeyDownCallbackType, keyCode?: KeyCodes) => {
+		windowKeyCallbacks.current.push({ cb: callback, code: keyCode });
+	}, []);
+	useEffect(() => {
+		window.addEventListener('keydown', onWindowKeyDownHandler);
+		return () => window.removeEventListener('keydown', onWindowKeyDownHandler);
+	}, []);
+
+	//?----------------------------- input key listeners --------------------------------
+	const inputKeyCallbacks = useRef<{ cb: InputKeyDownCallbackType; code?: KeyCodes }[]>([]);
+	const onInputKeyDownHandler = (e: KeyboardEvent, name: string) =>
+		inputKeyCallbacks.current.forEach(
 			({ cb, code }) => (code === undefined || code?.toLowerCase?.() === e?.code?.toLowerCase?.()) && cb(e, name)
 		);
-	const onInputKeyDown = useCallback((callback: KeyDownCallbackType, keyCode?: KeyCodes) => {
-		keyCallbacks.current.push({ cb: callback, code: keyCode });
+	const onInputKeyDown = useCallback((callback: InputKeyDownCallbackType, keyCode?: KeyCodes) => {
+		inputKeyCallbacks.current.push({ cb: callback, code: keyCode });
 	}, []);
+	//?----------------------------------------------------------------------------------
 
 	//? register input element
 	//? <input {...register('myInput')} />
@@ -225,7 +241,7 @@ const useInputs = (options?: Types.OptionsType) => {
 			return {
 				name,
 				value: Inputs?.[name]?.value || '',
-				onKeyDown: (e: KeyboardEvent) => onKeyDownHandler(e, name),
+				onKeyDown: (e: KeyboardEvent) => onInputKeyDownHandler(e, name),
 				onChange:
 					isRsuite || !!extra?.isRsuite
 						? (value: string) => onValueChange(name, value, extra)
@@ -251,6 +267,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		defaultValueOf,
 		isSomeModified,
 		onInputKeyDown,
+		onWindowKeyDown,
 		setAdditionalData,
 		getDirtyInputsData,
 		getDefaultInputsData,

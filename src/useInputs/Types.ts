@@ -43,6 +43,7 @@ export type InputsType = {
 	[name: string]: InputType;
 };
 
-export type KeyPressCallbackType = (event?: KeyboardEvent, name?: string) => any;
+export type KeyDownCallbackType = (event?: KeyboardEvent) => any;
+export type InputKeyDownCallbackType = (event?: KeyboardEvent, name?: string) => any;
 
 export default OptionsType;
