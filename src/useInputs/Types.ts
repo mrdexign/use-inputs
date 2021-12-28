@@ -12,6 +12,8 @@ export type Validation = {
 export type OptionsType = {
 	isRsuite?: boolean;
 	validation?: Validation;
+	// keyListener?: boolean;
+	submitBtnSelector?: string;
 };
 
 export type TypeEvent = {
@@ -40,5 +42,7 @@ export type InputType = {
 export type InputsType = {
 	[name: string]: InputType;
 };
+
+export type KeyPressCallbackType = (event?: KeyboardEvent, name?: string) => any;
 
 export default OptionsType;

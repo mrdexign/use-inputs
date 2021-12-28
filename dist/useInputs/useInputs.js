@@ -160,8 +160,19 @@ var useInputs = function (options) {
             .forEach(function (e) { var _a; return (data[e[0]] = ((_a = e[1]) === null || _a === void 0 ? void 0 : _a.value) || ''); });
         return data;
     }, [Inputs]);
+    var keyCallbacks = (0, react_1.useRef)([]);
+    var onKeyDownHandler = function (e, name) {
+        return keyCallbacks.current.forEach(function (_a) {
+            var _b, _c, _d;
+            var cb = _a.cb, code = _a.code;
+            return (code === undefined || ((_b = code === null || code === void 0 ? void 0 : code.toLowerCase) === null || _b === void 0 ? void 0 : _b.call(code)) === ((_d = (_c = e === null || e === void 0 ? void 0 : e.code) === null || _c === void 0 ? void 0 : _c.toLowerCase) === null || _d === void 0 ? void 0 : _d.call(_c))) && cb(e, name);
+        });
+    };
+    var onInputKeyDown = (0, react_1.useCallback)(function (callback, keyCode) {
+        keyCallbacks.current.push({ cb: callback, code: keyCode });
+    }, []);
     //? register input element
-    //? <input {...register('myInput')} ></input>
+    //? <input {...register('myInput')} />
     var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
         var _a, _b;
         if (extra === void 0) { extra = {}; }
@@ -189,6 +200,7 @@ var useInputs = function (options) {
         return {
             name: name,
             value: ((_b = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _b === void 0 ? void 0 : _b.value) || '',
+            onKeyDown: function (e) { return onKeyDownHandler(e, name); },
             onChange: isRsuite || !!(extra === null || extra === void 0 ? void 0 : extra.isRsuite)
                 ? function (value) { return onValueChange(name, value, extra); }
                 : function (e) { return onChange(e, extra); },
@@ -209,6 +221,7 @@ var useInputs = function (options) {
         isInputsValid: isInputsValid,
         defaultValueOf: defaultValueOf,
         isSomeModified: isSomeModified,
+        onInputKeyDown: onInputKeyDown,
         setAdditionalData: setAdditionalData,
         getDirtyInputsData: getDirtyInputsData,
         getDefaultInputsData: getDefaultInputsData,

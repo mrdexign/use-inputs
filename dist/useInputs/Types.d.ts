@@ -12,6 +12,7 @@ export declare type Validation = {
 export declare type OptionsType = {
     isRsuite?: boolean;
     validation?: Validation;
+    submitBtnSelector?: string;
 };
 export declare type TypeEvent = {
     name?: string | number;
@@ -36,4 +37,5 @@ export declare type InputType = {
 export declare type InputsType = {
     [name: string]: InputType;
 };
+export declare type KeyPressCallbackType = (event?: KeyboardEvent, name?: string) => any;
 export default OptionsType;

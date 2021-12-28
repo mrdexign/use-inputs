@@ -1,7 +1,7 @@
 import * as Types from './Types';
-import { extraType } from './Types';
+import { extraType, KeyPressCallbackType as KeyDownCallbackType } from './Types';
 import { validation } from './Validations';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 const useInputs = (options?: Types.OptionsType) => {
 	const [isInputsValid, setIsInputsValid] = useState(false);
@@ -180,8 +180,19 @@ const useInputs = (options?: Types.OptionsType) => {
 		return data;
 	}, [Inputs]);
 
+	//? key press listeners
+	type KeyCodes = string;
+	const keyCallbacks = useRef<{ cb: KeyDownCallbackType; code?: KeyCodes }[]>([]);
+	const onKeyDownHandler = (e: KeyboardEvent, name: string) =>
+		keyCallbacks.current.forEach(
+			({ cb, code }) => (code === undefined || code?.toLowerCase?.() === e?.code?.toLowerCase?.()) && cb(e, name)
+		);
+	const onInputKeyDown = useCallback((callback: KeyDownCallbackType, keyCode?: KeyCodes) => {
+		keyCallbacks.current.push({ cb: callback, code: keyCode });
+	}, []);
+
 	//? register input element
-	//? <input {...register('myInput')} ></input>
+	//? <input {...register('myInput')} />
 	const register = useCallback(
 		(name: string, extra: extraType = {}, isRsuite: boolean = options?.isRsuite || false) => {
 			const isInputEmpty = !Inputs[name];
@@ -214,6 +225,7 @@ const useInputs = (options?: Types.OptionsType) => {
 			return {
 				name,
 				value: Inputs?.[name]?.value || '',
+				onKeyDown: (e: KeyboardEvent) => onKeyDownHandler(e, name),
 				onChange:
 					isRsuite || !!extra?.isRsuite
 						? (value: string) => onValueChange(name, value, extra)
@@ -238,6 +250,7 @@ const useInputs = (options?: Types.OptionsType) => {
 		isInputsValid,
 		defaultValueOf,
 		isSomeModified,
+		onInputKeyDown,
 		setAdditionalData,
 		getDirtyInputsData,
 		getDefaultInputsData,
