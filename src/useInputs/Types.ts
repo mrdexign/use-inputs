@@ -1,19 +1,42 @@
-export type Validation = {
-	[name: string]: {
-		mask?: string;
-		regex?: RegExp;
-		errorMsg?: string;
-		required?: boolean;
-		validator?: (value: string) => boolean;
-		validChars?: 'number' | '+number' | 'alphabet' | RegExp;
-	};
-};
+export type InputsType = { [name: string]: InputType };
+
+export type Validation = { [name: string]: InputValidation };
+
+export type LabelsType = { [name: string]: string };
 
 export type OptionsType = {
 	isRsuite?: boolean;
-	validation?: Validation;
-	// keyListener?: boolean;
-	submitBtnSelector?: string;
+	labels?: LabelsType;
+	validation?: Validation; //Deprecated
+	inputs?: InputConfigType;
+};
+
+export type InputType = {
+	value: string;
+	defaultValue?: string;
+	dirty: boolean;
+	validation?: {
+		isValid: boolean;
+		errorMsg?: string;
+		required?: boolean;
+	};
+};
+
+export type InputValidation = {
+	mask?: string;
+	regex?: RegExp;
+	errorMsg?: string;
+	required?: boolean;
+	validator?: (value: string) => boolean;
+	validChars?: 'number' | '+number' | 'alphabet' | RegExp;
+};
+
+export type InputConfigType = {
+	[name: string]: {
+		label?: string;
+		validation?: InputValidation;
+		valueMap?: (value: string) => string;
+	};
 };
 
 export type TypeEvent = {
@@ -26,21 +49,6 @@ export type extraType = {
 	isRsuite?: boolean;
 	defaultValue?: string;
 	validChars?: 'number' | '+number' | 'alphabet' | RegExp;
-};
-
-export type InputType = {
-	value: string;
-	defaultValue?: string;
-	dirty: boolean;
-	validation?: {
-		errorMsg?: string;
-		isValid: boolean;
-		required?: boolean;
-	};
-};
-
-export type InputsType = {
-	[name: string]: InputType;
 };
 
 export type KeyDownCallbackType = (event?: KeyboardEvent) => any;

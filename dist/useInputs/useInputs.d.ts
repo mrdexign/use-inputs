@@ -8,6 +8,7 @@ declare const useInputs: (options?: Types.OptionsType | undefined) => {
         isValidDirty: boolean | undefined;
         msg: string;
     };
+    labelOf: (name: string) => string;
     valueOf: (name: string) => string;
     isDirty: (name: string) => boolean;
     addExtra: (name: string, extra: extraType) => void;

@@ -1,15 +1,21 @@
 import * as Types from './Types';
-import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Types';
 import { validation } from './Validations';
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Types';
 
 const useInputs = (options?: Types.OptionsType) => {
 	const [isInputsValid, setIsInputsValid] = useState(false);
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 
+	const validationOf = (name: string) => ({
+		...validation,
+		...options?.validation?.[name],
+		...(options?.inputs?.[name]?.validation || {}),
+	});
+
 	const validateInput = (name: string, value: string): boolean => {
 		let isValid = true;
-		const valid = { ...validation, ...options?.validation }?.[name];
+		const valid = validationOf(name);
 		if (valid?.regex) isValid = isValid && valid?.regex?.test(value);
 		if (valid?.validator) isValid = isValid && valid?.validator(value);
 		if (valid?.required) isValid = isValid && value !== '';
@@ -31,9 +37,9 @@ const useInputs = (options?: Types.OptionsType) => {
 	//? custom onChange
 	const onValueChange = useCallback(
 		(name: string, value: string = '', extra: extraType = {}) => {
-			const valid = { ...validation, ...options?.validation }?.[name];
-
+			const valid = validationOf(name);
 			const validCharType = extra?.validChars || valid?.validChars;
+
 			if (validCharType) {
 				if (validCharType instanceof RegExp && !validCharType.test(value)) return;
 				else if (validCharType === '+number' && !/^[0-9]*[.]?[0-9]*$/.test(value)) return;
@@ -42,12 +48,11 @@ const useInputs = (options?: Types.OptionsType) => {
 			}
 
 			let isValid = validateInput(name, value);
-
 			setInputs(state => ({
 				...state,
 				[name]: {
 					dirty: true,
-					value: value,
+					value: options?.inputs?.[name]?.valueMap?.(value) || value,
 					validation: {
 						isValid,
 						required: valid?.required,
@@ -128,7 +133,7 @@ const useInputs = (options?: Types.OptionsType) => {
 	//? return true if any inputs value changed
 	const isSomeModified = Object.values(Inputs).some(i => i.value !== (i.defaultValue === undefined ? '' : i.defaultValue));
 
-	//? get validation info about some input
+	//? get validation info about an input
 	const validOf = (name: string) => {
 		const isValid = Inputs?.[name]?.validation?.isValid;
 		return {
@@ -137,6 +142,9 @@ const useInputs = (options?: Types.OptionsType) => {
 			msg: Inputs?.[name]?.validation?.errorMsg || '',
 		};
 	};
+
+	//? get label of an input
+	const labelOf = (name: string) => options?.inputs?.[name]?.label || options?.labels?.[name] || '';
 
 	//? reset all inputs values
 	const resetInputs = useCallback(
@@ -254,6 +262,7 @@ const useInputs = (options?: Types.OptionsType) => {
 	return {
 		Inputs,
 		validOf,
+		labelOf,
 		valueOf,
 		isDirty,
 		addExtra,
