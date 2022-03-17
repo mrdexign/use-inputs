@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import * as Types from './Types';
 import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Types';
-declare const useInputs: (options?: Types.OptionsType | undefined) => {
+declare const useInputs: <T extends Types.OptionsType>(options?: T | undefined) => {
     Inputs: Types.InputsType;
     validOf: (name: string) => {
         isValid: boolean | undefined;
@@ -11,10 +11,13 @@ declare const useInputs: (options?: Types.OptionsType | undefined) => {
     labelOf: (name: string) => string;
     valueOf: (name: string) => string;
     isDirty: (name: string) => boolean;
+    options: T | undefined;
+    setDirty: (name: string, isDirty: boolean) => void;
     addExtra: (name: string, extra: extraType) => void;
     register: (name: string, extra?: extraType, isRsuite?: boolean) => object;
     setInputs: import("react").Dispatch<import("react").SetStateAction<Types.InputsType>>;
     resetInputs: (inputsName?: Array<string>) => void;
+    setAllDirty: () => void;
     isSomeDirty: boolean;
     getInputsData: () => any;
     setInputValue: (name: string, value: string) => void;
@@ -23,8 +26,11 @@ declare const useInputs: (options?: Types.OptionsType | undefined) => {
     isSomeModified: boolean;
     onInputKeyDown: (callback: InputKeyDownCallbackType, keyCode?: string | undefined) => void;
     onWindowKeyDown: (callback: KeyDownCallbackType, keyCode?: string | undefined) => void;
-    setAdditionalData: (name: string, data: any) => void;
     getDirtyInputsData: () => any;
     getDefaultInputsData: () => any;
+    Data: Record<string, any>;
+    setData: import("react").Dispatch<import("react").SetStateAction<Record<string, any>>>;
+    addData: (name: string, data: any) => void;
+    removeData: (name: string, data: any) => void;
 };
 export default useInputs;

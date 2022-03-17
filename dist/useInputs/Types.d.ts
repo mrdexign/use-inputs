@@ -1,14 +1,16 @@
 /// <reference types="react" />
+import { regex, validCharsRegex } from './constants';
+export declare type LabelsType = {
+    [name: string]: string;
+};
 export declare type InputsType = {
     [name: string]: InputType;
 };
 export declare type Validation = {
     [name: string]: InputValidation;
 };
-export declare type LabelsType = {
-    [name: string]: string;
-};
-export declare type OptionsType = {
+export declare type ValidCharsType = RegExp | keyof typeof validCharsRegex;
+export declare type OptionsType = Record<string, any> & {
     isRsuite?: boolean;
     labels?: LabelsType;
     validation?: Validation;
@@ -26,11 +28,11 @@ export declare type InputType = {
 };
 export declare type InputValidation = {
     mask?: string;
-    regex?: RegExp;
+    regex?: RegExp | keyof typeof regex;
     errorMsg?: string;
     required?: boolean;
     validator?: (value: string) => boolean;
-    validChars?: 'number' | '+number' | 'alphabet' | RegExp;
+    validChars?: ValidCharsType;
 };
 export declare type InputConfigType = {
     [name: string]: {
@@ -47,7 +49,7 @@ export declare type TypeEvent = {
 export declare type extraType = {
     isRsuite?: boolean;
     defaultValue?: string;
-    validChars?: 'number' | '+number' | 'alphabet' | RegExp;
+    validChars?: ValidCharsType;
 };
 export declare type KeyDownCallbackType = (event?: KeyboardEvent) => any;
 export declare type InputKeyDownCallbackType = (event?: KeyboardEvent, name?: string) => any;

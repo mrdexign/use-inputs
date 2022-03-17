@@ -1,10 +1,14 @@
+import { regex, validCharsRegex } from './constants';
+
+export type LabelsType = { [name: string]: string };
+
 export type InputsType = { [name: string]: InputType };
 
 export type Validation = { [name: string]: InputValidation };
 
-export type LabelsType = { [name: string]: string };
+export type ValidCharsType = RegExp | keyof typeof validCharsRegex;
 
-export type OptionsType = {
+export type OptionsType = Record<string, any> & {
 	isRsuite?: boolean;
 	labels?: LabelsType;
 	validation?: Validation; //Deprecated
@@ -24,11 +28,11 @@ export type InputType = {
 
 export type InputValidation = {
 	mask?: string;
-	regex?: RegExp;
+	regex?: RegExp | keyof typeof regex;
 	errorMsg?: string;
 	required?: boolean;
 	validator?: (value: string) => boolean;
-	validChars?: 'number' | '+number' | 'alphabet' | RegExp;
+	validChars?: ValidCharsType;
 };
 
 export type InputConfigType = {
@@ -48,7 +52,7 @@ export type TypeEvent = {
 export type extraType = {
 	isRsuite?: boolean;
 	defaultValue?: string;
-	validChars?: 'number' | '+number' | 'alphabet' | RegExp;
+	validChars?: ValidCharsType;
 };
 
 export type KeyDownCallbackType = (event?: KeyboardEvent) => any;

@@ -23,9 +23,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.types = exports.validation = void 0;
+var types = __importStar(require("./useInputs/Types"));
+exports.types = types;
 var useInputs_1 = __importDefault(require("./useInputs/useInputs"));
 var Validations_1 = require("./useInputs/Validations");
 Object.defineProperty(exports, "validation", { enumerable: true, get: function () { return Validations_1.validation; } });
-var types = __importStar(require("./useInputs/Types"));
-exports.types = types;
 exports.default = useInputs_1.default;

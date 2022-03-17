@@ -12,24 +12,31 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Validations_1 = require("./Validations");
+var constants_1 = require("./constants");
 var react_1 = require("react");
 var useInputs = function (options) {
     var _a = (0, react_1.useState)(false), isInputsValid = _a[0], setIsInputsValid = _a[1];
     var _b = (0, react_1.useState)({}), Inputs = _b[0], setInputs = _b[1];
+    var _c = (0, react_1.useState)({}), Data = _c[0], setData = _c[1];
     var validationOf = function (name) {
         var _a, _b, _c;
         return (__assign(__assign(__assign({}, Validations_1.validation), (_a = options === null || options === void 0 ? void 0 : options.validation) === null || _a === void 0 ? void 0 : _a[name]), (((_c = (_b = options === null || options === void 0 ? void 0 : options.inputs) === null || _b === void 0 ? void 0 : _b[name]) === null || _c === void 0 ? void 0 : _c.validation) || {})));
     };
     var validateInput = function (name, value) {
-        var _a;
+        var _a, _b, _c;
         var isValid = true;
         var valid = validationOf(name);
-        if (valid === null || valid === void 0 ? void 0 : valid.regex)
-            isValid = isValid && ((_a = valid === null || valid === void 0 ? void 0 : valid.regex) === null || _a === void 0 ? void 0 : _a.test(value));
-        if (valid === null || valid === void 0 ? void 0 : valid.validator)
-            isValid = isValid && (valid === null || valid === void 0 ? void 0 : valid.validator(value));
+        var inputValue = (_a = (value || '')) === null || _a === void 0 ? void 0 : _a.trim();
         if (valid === null || valid === void 0 ? void 0 : valid.required)
-            isValid = isValid && value !== '';
+            isValid = isValid && inputValue !== '';
+        if (valid === null || valid === void 0 ? void 0 : valid.validator)
+            isValid = isValid && (valid === null || valid === void 0 ? void 0 : valid.validator(inputValue));
+        if (valid === null || valid === void 0 ? void 0 : valid.regex) {
+            if ((valid === null || valid === void 0 ? void 0 : valid.regex) instanceof RegExp)
+                isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.regex) === null || _b === void 0 ? void 0 : _b.test(inputValue));
+            else
+                isValid = isValid && ((_c = constants_1.regex === null || constants_1.regex === void 0 ? void 0 : constants_1.regex[valid === null || valid === void 0 ? void 0 : valid.regex]) === null || _c === void 0 ? void 0 : _c.test(inputValue));
+        }
         return isValid;
     };
     //? validity check of all values
@@ -41,7 +48,7 @@ var useInputs = function (options) {
             return !!((_a = i === null || i === void 0 ? void 0 : i.validation) === null || _a === void 0 ? void 0 : _a.isValid);
         }));
     }, [Inputs]);
-    //? custom onChange
+    //? root onChange
     var onValueChange = (0, react_1.useCallback)(function (name, value, extra) {
         if (value === void 0) { value = ''; }
         if (extra === void 0) { extra = {}; }
@@ -50,12 +57,11 @@ var useInputs = function (options) {
         if (validCharType) {
             if (validCharType instanceof RegExp && !validCharType.test(value))
                 return;
-            else if (validCharType === '+number' && !/^[0-9]*[.]?[0-9]*$/.test(value))
-                return;
-            else if (validCharType === 'number' && !/^(\-|\+)?[0-9]*[.]?[0-9]*$/.test(value))
-                return;
-            else if (validCharType === 'alphabet' && !/^[a-zA-Z\s]*$/.test(value))
-                return;
+            if (typeof validCharType === 'string') {
+                var regex_1 = constants_1.validCharsRegex === null || constants_1.validCharsRegex === void 0 ? void 0 : constants_1.validCharsRegex[validCharType];
+                if (regex_1 && !(regex_1 === null || regex_1 === void 0 ? void 0 : regex_1.test(value)))
+                    return;
+            }
         }
         var isValid = validateInput(name, value);
         setInputs(function (state) {
@@ -68,7 +74,7 @@ var useInputs = function (options) {
                 } }, extra), _a)));
         });
     }, [options === null || options === void 0 ? void 0 : options.validation]);
-    //? custom onChange
+    //? original input onChange
     var onChange = (0, react_1.useCallback)(function (event, extra) {
         var _a, _b;
         if (extra === void 0) { extra = {}; }
@@ -94,20 +100,19 @@ var useInputs = function (options) {
                 : {})), _a)));
         });
     };
-    //?set additional data to Inputs
-    var setAdditionalData = function (name, data) {
-        return setInputs(function (state) {
-            var _a;
-            return (__assign(__assign({}, state), (_a = {}, _a[name] = {
-                dirty: true,
-                value: data,
-            }, _a)));
+    //? add data
+    var addData = function (name, data) { return setData(function (state) {
+        var _a;
+        return (__assign(__assign({}, state), (_a = {}, _a[name] = data, _a)));
+    }); };
+    //? remove data
+    var removeData = function (name, data) {
+        return setData(function (state) {
+            var newState = __assign({}, state);
+            newState === null || newState === void 0 ? true : delete newState[name];
+            return newState;
         });
     };
-    //? get value of some input
-    var valueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value; };
-    //? get default value of some input
-    var defaultValueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue; };
     //? add extra data to some input
     var addExtra = function (name, extra) {
         return setInputs(function (state) {
@@ -115,8 +120,42 @@ var useInputs = function (options) {
             return (__assign(__assign({}, state), (_a = {}, _a[name] = __assign(__assign({}, state === null || state === void 0 ? void 0 : state[name]), extra), _a)));
         });
     };
+    //? make all inputs dirty
+    var setAllDirty = function () {
+        return setInputs(function (state) {
+            var _a;
+            var newState = __assign({}, state);
+            (_a = Object === null || Object === void 0 ? void 0 : Object.entries(newState)) === null || _a === void 0 ? void 0 : _a.forEach(function (_a) {
+                var name = _a[0];
+                var curInput = newState === null || newState === void 0 ? void 0 : newState[name];
+                curInput.dirty = true;
+                if (curInput === null || curInput === void 0 ? void 0 : curInput.validation)
+                    curInput.validation.isValid = validateInput(name, curInput.value);
+            });
+            return newState;
+        });
+    };
+    //? control dirty state of an input
+    var setDirty = function (name, isDirty) {
+        return setInputs(function (state) {
+            var newState = __assign({}, state);
+            var curInput = newState === null || newState === void 0 ? void 0 : newState[name];
+            if (!curInput)
+                return newState;
+            curInput.dirty = isDirty;
+            if (curInput === null || curInput === void 0 ? void 0 : curInput.validation)
+                curInput.validation.isValid = validateInput(name, curInput.value);
+            return newState;
+        });
+    };
     //? get dirty state of some input
     var isDirty = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty; };
+    //? get value of some input
+    var valueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value; };
+    //? get default value of some input
+    var defaultValueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue; };
+    //? get label of an input
+    var labelOf = function (name) { var _a, _b, _c; return ((_b = (_a = options === null || options === void 0 ? void 0 : options.inputs) === null || _a === void 0 ? void 0 : _a[name]) === null || _b === void 0 ? void 0 : _b.label) || ((_c = options === null || options === void 0 ? void 0 : options.labels) === null || _c === void 0 ? void 0 : _c[name]) || ''; };
     //? return true if any dirty input exist
     var isSomeDirty = Object.values(Inputs).some(function (i) { return i.dirty === true; });
     //? return true if any inputs value changed
@@ -131,8 +170,6 @@ var useInputs = function (options) {
             msg: ((_d = (_c = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _c === void 0 ? void 0 : _c.validation) === null || _d === void 0 ? void 0 : _d.errorMsg) || '',
         };
     };
-    //? get label of an input
-    var labelOf = function (name) { var _a, _b, _c; return ((_b = (_a = options === null || options === void 0 ? void 0 : options.inputs) === null || _a === void 0 ? void 0 : _a[name]) === null || _b === void 0 ? void 0 : _b.label) || ((_c = options === null || options === void 0 ? void 0 : options.labels) === null || _c === void 0 ? void 0 : _c[name]) || ''; };
     //? reset all inputs values
     var resetInputs = (0, react_1.useCallback)(function (inputsName) {
         if (inputsName === void 0) { inputsName = []; }
@@ -194,16 +231,13 @@ var useInputs = function (options) {
         inputKeyCallbacks.current.push({ cb: callback, code: keyCode });
     }, []);
     //?----------------------------------------------------------------------------------
-    //? register input element
-    //? <input {...register('myInput')} />
-    var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
-        var _a, _b;
+    var _initializeInput = function (name, extra) {
+        var _a;
         if (extra === void 0) { extra = {}; }
-        if (isRsuite === void 0) { isRsuite = (options === null || options === void 0 ? void 0 : options.isRsuite) || false; }
         var isInputEmpty = !Inputs[name];
         var isDefaultValueUpdated = (extra === null || extra === void 0 ? void 0 : extra.defaultValue) !== ((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue);
-        if (isInputEmpty || isDefaultValueUpdated) {
-            setInputs(function (state) {
+        if (isInputEmpty || isDefaultValueUpdated)
+            return setInputs(function (state) {
                 var _a;
                 var _b;
                 var value = (extra === null || extra === void 0 ? void 0 : extra.defaultValue) || '';
@@ -219,14 +253,27 @@ var useInputs = function (options) {
                     }
                     : {})), _a));
             });
-        }
+    };
+    (0, react_1.useEffect)(function () {
+        var all = __assign(__assign(__assign({}, ((options === null || options === void 0 ? void 0 : options.inputs) || {})), ((options === null || options === void 0 ? void 0 : options.labels) || {})), ((options === null || options === void 0 ? void 0 : options.validation) || {}));
+        Object.keys(all).forEach(function (name) { return !(Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) && _initializeInput(name); });
+    }, [options === null || options === void 0 ? void 0 : options.inputs, options === null || options === void 0 ? void 0 : options.labels, options === null || options === void 0 ? void 0 : options.validation]);
+    //? register input element
+    //? <input {...register('myInput')} />
+    var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
+        var _a;
+        if (extra === void 0) { extra = {}; }
+        if (isRsuite === void 0) { isRsuite = (options === null || options === void 0 ? void 0 : options.isRsuite) || false; }
+        var _onChange = function (e) { return onChange(e, extra); };
+        if (isRsuite || !!(extra === null || extra === void 0 ? void 0 : extra.isRsuite))
+            _onChange = function (value) { return onValueChange(name, value, extra); };
+        _initializeInput(name, extra);
         return {
             name: name,
-            value: ((_b = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _b === void 0 ? void 0 : _b.value) || '',
+            onChange: _onChange,
+            value: ((_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value) || '',
+            onBlur: function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); },
             onKeyDown: function (e) { return onInputKeyDownHandler(e, name); },
-            onChange: isRsuite || !!(extra === null || extra === void 0 ? void 0 : extra.isRsuite)
-                ? function (value) { return onValueChange(name, value, extra); }
-                : function (e) { return onChange(e, extra); },
         };
     }, [Inputs, onValueChange, options === null || options === void 0 ? void 0 : options.isRsuite]);
     return {
@@ -235,10 +282,13 @@ var useInputs = function (options) {
         labelOf: labelOf,
         valueOf: valueOf,
         isDirty: isDirty,
+        options: options,
+        setDirty: setDirty,
         addExtra: addExtra,
         register: register,
         setInputs: setInputs,
         resetInputs: resetInputs,
+        setAllDirty: setAllDirty,
         isSomeDirty: isSomeDirty,
         getInputsData: getInputsData,
         setInputValue: setInputValue,
@@ -247,9 +297,12 @@ var useInputs = function (options) {
         isSomeModified: isSomeModified,
         onInputKeyDown: onInputKeyDown,
         onWindowKeyDown: onWindowKeyDown,
-        setAdditionalData: setAdditionalData,
         getDirtyInputsData: getDirtyInputsData,
         getDefaultInputsData: getDefaultInputsData,
+        Data: Data,
+        setData: setData,
+        addData: addData,
+        removeData: removeData,
     };
 };
 exports.default = useInputs;
