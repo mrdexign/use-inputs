@@ -53,6 +53,9 @@ export type extraType = {
 	isRsuite?: boolean;
 	defaultValue?: string;
 	validChars?: ValidCharsType;
+	onBlur?: Function | false;
+	onKeyDown?: ((e: KeyboardEvent) => void) | false;
+	onChange?: ((e: React.ChangeEvent<HTMLInputElement>) => void) | false;
 };
 
 export type KeyDownCallbackType = (event?: KeyboardEvent) => any;

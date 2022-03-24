@@ -14,7 +14,7 @@ declare const useInputs: <T extends Types.OptionsType>(options?: T | undefined) 
     options: T | undefined;
     setDirty: (name: string, isDirty: boolean) => void;
     addExtra: (name: string, extra: extraType) => void;
-    register: (name: string, extra?: extraType, isRsuite?: boolean) => object;
+    register: (name: string, extra?: extraType, isRsuite?: boolean) => Record<string, any>;
     setInputs: import("react").Dispatch<import("react").SetStateAction<Types.InputsType>>;
     resetInputs: (inputsName?: Array<string>) => void;
     setAllDirty: () => void;

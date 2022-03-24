@@ -261,20 +261,29 @@ var useInputs = function (options) {
     //? register input element
     //? <input {...register('myInput')} />
     var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
-        var _a;
+        var _a, _b, _c, _d, _e, _f;
         if (extra === void 0) { extra = {}; }
         if (isRsuite === void 0) { isRsuite = (options === null || options === void 0 ? void 0 : options.isRsuite) || false; }
         var _onChange = function (e) { return onChange(e, extra); };
         if (isRsuite || !!(extra === null || extra === void 0 ? void 0 : extra.isRsuite))
             _onChange = function (value) { return onValueChange(name, value, extra); };
         _initializeInput(name, extra);
-        return {
+        var registerObj = {
             name: name,
-            onChange: _onChange,
             value: ((_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value) || '',
-            onBlur: function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); },
-            onKeyDown: function (e) { return onInputKeyDownHandler(e, name); },
+            onBlur: (_b = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _b !== void 0 ? _b : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); }),
+            onKeyDown: (_c = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _c !== void 0 ? _c : (function (e) { return onInputKeyDownHandler(e, name); }),
         };
+        if ((extra === null || extra === void 0 ? void 0 : extra.onChange) !== false) {
+            registerObj.onChange = (_d = extra === null || extra === void 0 ? void 0 : extra.onChange) !== null && _d !== void 0 ? _d : _onChange;
+        }
+        if ((extra === null || extra === void 0 ? void 0 : extra.onBlur) !== false) {
+            registerObj.onBlur = (_e = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _e !== void 0 ? _e : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); });
+        }
+        if ((extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== false) {
+            registerObj.onKeyDown = (_f = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _f !== void 0 ? _f : (function (e) { return onInputKeyDownHandler(e, name); });
+        }
+        return registerObj;
     }, [Inputs, onValueChange, options === null || options === void 0 ? void 0 : options.isRsuite]);
     return {
         Inputs: Inputs,

@@ -286,13 +286,25 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 			let _onChange: any = (e: React.ChangeEvent<HTMLInputElement>) => onChange(e, extra);
 			if (isRsuite || !!extra?.isRsuite) _onChange = (value: string) => onValueChange(name, value, extra);
 			_initializeInput(name, extra);
-			return {
+
+			const registerObj: Record<string, any> = {
 				name,
-				onChange: _onChange,
 				value: Inputs?.[name]?.value || '',
-				onBlur: () => !Inputs[name]?.dirty && setDirty(name, true),
-				onKeyDown: (e: KeyboardEvent) => onInputKeyDownHandler(e, name),
-			} as object;
+				onBlur: extra?.onBlur ?? (() => !Inputs[name]?.dirty && setDirty(name, true)),
+				onKeyDown: extra?.onKeyDown ?? ((e: KeyboardEvent) => onInputKeyDownHandler(e, name)),
+			};
+
+			if (extra?.onChange !== false) {
+				registerObj.onChange = extra?.onChange ?? _onChange;
+			}
+			if (extra?.onBlur !== false) {
+				registerObj.onBlur = extra?.onBlur ?? (() => !Inputs[name]?.dirty && setDirty(name, true));
+			}
+			if (extra?.onKeyDown !== false) {
+				registerObj.onKeyDown = extra?.onKeyDown ?? ((e: KeyboardEvent) => onInputKeyDownHandler(e, name));
+			}
+
+			return registerObj;
 		},
 		[Inputs, onValueChange, options?.isRsuite]
 	);

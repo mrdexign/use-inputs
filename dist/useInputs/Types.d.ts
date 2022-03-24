@@ -50,6 +50,9 @@ export declare type extraType = {
     isRsuite?: boolean;
     defaultValue?: string;
     validChars?: ValidCharsType;
+    onBlur?: Function | false;
+    onKeyDown?: ((e: KeyboardEvent) => void) | false;
+    onChange?: ((e: React.ChangeEvent<HTMLInputElement>) => void) | false;
 };
 export declare type KeyDownCallbackType = (event?: KeyboardEvent) => any;
 export declare type InputKeyDownCallbackType = (event?: KeyboardEvent, name?: string) => any;
