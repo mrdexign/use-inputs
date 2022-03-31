@@ -15,15 +15,15 @@ var Validations_1 = require("./Validations");
 var constants_1 = require("./constants");
 var react_1 = require("react");
 var useInputs = function (options) {
-    var _a = (0, react_1.useState)(false), isInputsValid = _a[0], setIsInputsValid = _a[1];
-    var _b = (0, react_1.useState)({}), Inputs = _b[0], setInputs = _b[1];
-    var _c = (0, react_1.useState)({}), Data = _c[0], setData = _c[1];
+    var _a = (0, react_1.useState)({}), Inputs = _a[0], setInputs = _a[1];
+    var _b = (0, react_1.useState)({}), Data = _b[0], setData = _b[1];
+    var _c = (0, react_1.useState)(false), isInputsValid = _c[0], setIsInputsValid = _c[1];
     var validationOf = function (name) {
         var _a, _b, _c;
         return (__assign(__assign(__assign({}, Validations_1.validation), (_a = options === null || options === void 0 ? void 0 : options.validation) === null || _a === void 0 ? void 0 : _a[name]), (((_c = (_b = options === null || options === void 0 ? void 0 : options.inputs) === null || _b === void 0 ? void 0 : _b[name]) === null || _c === void 0 ? void 0 : _c.validation) || {})));
     };
     var validateInput = function (name, value) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f;
         var isValid = true;
         var valid = validationOf(name);
         var inputValue = (_a = (value || '')) === null || _a === void 0 ? void 0 : _a.trim();
@@ -36,6 +36,17 @@ var useInputs = function (options) {
                 isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.regex) === null || _b === void 0 ? void 0 : _b.test(inputValue));
             else
                 isValid = isValid && ((_c = constants_1.regex === null || constants_1.regex === void 0 ? void 0 : constants_1.regex[valid === null || valid === void 0 ? void 0 : valid.regex]) === null || _c === void 0 ? void 0 : _c.test(inputValue));
+        }
+        if (options === null || options === void 0 ? void 0 : options.passwordTuples) {
+            var passTuple = (_d = options === null || options === void 0 ? void 0 : options.passwordTuples) === null || _d === void 0 ? void 0 : _d.find(function (t) { return t === null || t === void 0 ? void 0 : t.includes(name); });
+            if (passTuple) {
+                var otherName = (_e = passTuple === null || passTuple === void 0 ? void 0 : passTuple.filter(function (n) { return n !== name; })) === null || _e === void 0 ? void 0 : _e[0];
+                var isEquals = ((_f = Inputs === null || Inputs === void 0 ? void 0 : Inputs[otherName]) === null || _f === void 0 ? void 0 : _f.value) === inputValue;
+                if (isDirty(otherName)) {
+                    isValid = isValid && isEquals;
+                    setInputValidity(otherName, isValid);
+                }
+            }
         }
         return isValid;
     };
@@ -145,6 +156,17 @@ var useInputs = function (options) {
             curInput.dirty = isDirty;
             if (curInput === null || curInput === void 0 ? void 0 : curInput.validation)
                 curInput.validation.isValid = validateInput(name, curInput.value);
+            return newState;
+        });
+    };
+    //? manually set an input validity
+    var setInputValidity = function (name, isValid) {
+        return setInputs(function (state) {
+            var newState = __assign({}, state);
+            var curInput = newState === null || newState === void 0 ? void 0 : newState[name];
+            if (!curInput)
+                return newState;
+            (curInput === null || curInput === void 0 ? void 0 : curInput.validation) && (curInput.validation.isValid = isValid);
             return newState;
         });
     };

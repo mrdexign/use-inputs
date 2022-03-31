@@ -13,6 +13,7 @@ export type OptionsType = Record<string, any> & {
 	labels?: LabelsType;
 	validation?: Validation; //Deprecated
 	inputs?: InputConfigType;
+	passwordTuples?: [string, string][];
 };
 
 export type InputType = {
@@ -27,16 +28,16 @@ export type InputType = {
 };
 
 export type InputValidation = {
-	mask?: string;
-	regex?: RegExp | keyof typeof regex;
 	errorMsg?: string;
 	required?: boolean;
-	validator?: (value: string) => boolean;
 	validChars?: ValidCharsType;
+	regex?: RegExp | keyof typeof regex;
+	validator?: (value: string) => boolean;
 };
 
 export type InputConfigType = {
 	[name: string]: {
+		//TODO: mask?: string;
 		label?: string;
 		validation?: InputValidation;
 		valueMap?: (value: string) => string;

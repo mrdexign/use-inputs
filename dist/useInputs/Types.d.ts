@@ -15,6 +15,7 @@ export declare type OptionsType = Record<string, any> & {
     labels?: LabelsType;
     validation?: Validation;
     inputs?: InputConfigType;
+    passwordTuples?: [string, string][];
 };
 export declare type InputType = {
     value: string;
@@ -27,12 +28,11 @@ export declare type InputType = {
     };
 };
 export declare type InputValidation = {
-    mask?: string;
-    regex?: RegExp | keyof typeof regex;
     errorMsg?: string;
     required?: boolean;
-    validator?: (value: string) => boolean;
     validChars?: ValidCharsType;
+    regex?: RegExp | keyof typeof regex;
+    validator?: (value: string) => boolean;
 };
 export declare type InputConfigType = {
     [name: string]: {

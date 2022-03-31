@@ -5,9 +5,9 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Types';
 
 const useInputs = <T extends Types.OptionsType>(options?: T) => {
-	const [isInputsValid, setIsInputsValid] = useState(false);
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 	const [Data, setData] = useState<Record<string, any>>({});
+	const [isInputsValid, setIsInputsValid] = useState(false);
 
 	const validationOf = (name: string) => ({
 		...validation,
@@ -25,6 +25,19 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 			if (valid?.regex instanceof RegExp) isValid = isValid && valid?.regex?.test(inputValue);
 			else isValid = isValid && regex?.[valid?.regex]?.test(inputValue);
 		}
+
+		if (options?.passwordTuples) {
+			const passTuple = options?.passwordTuples?.find(t => t?.includes(name));
+			if (passTuple) {
+				const otherName = passTuple?.filter(n => n !== name)?.[0];
+				const isEquals = Inputs?.[otherName]?.value === inputValue;
+				if (isDirty(otherName)) {
+					isValid = isValid && isEquals;
+					setInputValidity(otherName, isValid);
+				}
+			}
+		}
+
 		return isValid;
 	};
 
@@ -146,6 +159,16 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 			if (!curInput) return newState;
 			curInput.dirty = isDirty;
 			if (curInput?.validation) curInput.validation.isValid = validateInput(name, curInput.value);
+			return newState;
+		});
+
+	//? manually set an input validity
+	const setInputValidity = (name: string, isValid: boolean) =>
+		setInputs(state => {
+			const newState = { ...state };
+			const curInput = newState?.[name];
+			if (!curInput) return newState;
+			curInput?.validation && (curInput.validation.isValid = isValid);
 			return newState;
 		});
 
