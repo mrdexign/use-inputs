@@ -19,12 +19,12 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 		let isValid = true;
 		const valid = validationOf(name);
 		const inputValue = (value || '')?.trim();
+
 		if (valid?.required) isValid = isValid && inputValue !== '';
-		if (valid?.validator) isValid = isValid && valid?.validator(inputValue);
-		if (valid?.regex) {
-			if (valid?.regex instanceof RegExp) isValid = isValid && valid?.regex?.test(inputValue);
-			else isValid = isValid && regex?.[valid?.regex]?.test(inputValue);
-		}
+
+		if (valid?.validator) isValid = isValid && valid?.validator?.(inputValue);
+
+		if (valid?.regex) isValid = isValid && (valid?.regex instanceof RegExp ? valid?.regex : regex?.[valid?.regex])?.test(inputValue);
 
 		if (options?.passwordTuples) {
 			const passTuple = options?.passwordTuples?.find(t => t?.includes(name));
@@ -313,19 +313,12 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 			const registerObj: Record<string, any> = {
 				name,
 				value: Inputs?.[name]?.value || '',
+				onChange: extra?.onChange ?? _onChange,
 				onBlur: extra?.onBlur ?? (() => !Inputs[name]?.dirty && setDirty(name, true)),
 				onKeyDown: extra?.onKeyDown ?? ((e: KeyboardEvent) => onInputKeyDownHandler(e, name)),
 			};
 
-			if (extra?.onChange !== false) {
-				registerObj.onChange = extra?.onChange ?? _onChange;
-			}
-			if (extra?.onBlur !== false) {
-				registerObj.onBlur = extra?.onBlur ?? (() => !Inputs[name]?.dirty && setDirty(name, true));
-			}
-			if (extra?.onKeyDown !== false) {
-				registerObj.onKeyDown = extra?.onKeyDown ?? ((e: KeyboardEvent) => onInputKeyDownHandler(e, name));
-			}
+			['onChange', 'onBlur', 'onKeyDown'].forEach(e => extra?.[e] === false && delete registerObj[e]);
 
 			return registerObj;
 		},

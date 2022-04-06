@@ -30,13 +30,9 @@ var useInputs = function (options) {
         if (valid === null || valid === void 0 ? void 0 : valid.required)
             isValid = isValid && inputValue !== '';
         if (valid === null || valid === void 0 ? void 0 : valid.validator)
-            isValid = isValid && (valid === null || valid === void 0 ? void 0 : valid.validator(inputValue));
-        if (valid === null || valid === void 0 ? void 0 : valid.regex) {
-            if ((valid === null || valid === void 0 ? void 0 : valid.regex) instanceof RegExp)
-                isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.regex) === null || _b === void 0 ? void 0 : _b.test(inputValue));
-            else
-                isValid = isValid && ((_c = constants_1.regex === null || constants_1.regex === void 0 ? void 0 : constants_1.regex[valid === null || valid === void 0 ? void 0 : valid.regex]) === null || _c === void 0 ? void 0 : _c.test(inputValue));
-        }
+            isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.validator) === null || _b === void 0 ? void 0 : _b.call(valid, inputValue));
+        if (valid === null || valid === void 0 ? void 0 : valid.regex)
+            isValid = isValid && ((_c = ((valid === null || valid === void 0 ? void 0 : valid.regex) instanceof RegExp ? valid === null || valid === void 0 ? void 0 : valid.regex : constants_1.regex === null || constants_1.regex === void 0 ? void 0 : constants_1.regex[valid === null || valid === void 0 ? void 0 : valid.regex])) === null || _c === void 0 ? void 0 : _c.test(inputValue));
         if (options === null || options === void 0 ? void 0 : options.passwordTuples) {
             var passTuple = (_d = options === null || options === void 0 ? void 0 : options.passwordTuples) === null || _d === void 0 ? void 0 : _d.find(function (t) { return t === null || t === void 0 ? void 0 : t.includes(name); });
             if (passTuple) {
@@ -283,7 +279,7 @@ var useInputs = function (options) {
     //? register input element
     //? <input {...register('myInput')} />
     var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d;
         if (extra === void 0) { extra = {}; }
         if (isRsuite === void 0) { isRsuite = (options === null || options === void 0 ? void 0 : options.isRsuite) || false; }
         var _onChange = function (e) { return onChange(e, extra); };
@@ -293,18 +289,11 @@ var useInputs = function (options) {
         var registerObj = {
             name: name,
             value: ((_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value) || '',
-            onBlur: (_b = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _b !== void 0 ? _b : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); }),
-            onKeyDown: (_c = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _c !== void 0 ? _c : (function (e) { return onInputKeyDownHandler(e, name); }),
+            onChange: (_b = extra === null || extra === void 0 ? void 0 : extra.onChange) !== null && _b !== void 0 ? _b : _onChange,
+            onBlur: (_c = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _c !== void 0 ? _c : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); }),
+            onKeyDown: (_d = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _d !== void 0 ? _d : (function (e) { return onInputKeyDownHandler(e, name); }),
         };
-        if ((extra === null || extra === void 0 ? void 0 : extra.onChange) !== false) {
-            registerObj.onChange = (_d = extra === null || extra === void 0 ? void 0 : extra.onChange) !== null && _d !== void 0 ? _d : _onChange;
-        }
-        if ((extra === null || extra === void 0 ? void 0 : extra.onBlur) !== false) {
-            registerObj.onBlur = (_e = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _e !== void 0 ? _e : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); });
-        }
-        if ((extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== false) {
-            registerObj.onKeyDown = (_f = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _f !== void 0 ? _f : (function (e) { return onInputKeyDownHandler(e, name); });
-        }
+        ['onChange', 'onBlur', 'onKeyDown'].forEach(function (e) { return (extra === null || extra === void 0 ? void 0 : extra[e]) === false && delete registerObj[e]; });
         return registerObj;
     }, [Inputs, onValueChange, options === null || options === void 0 ? void 0 : options.isRsuite]);
     return {
