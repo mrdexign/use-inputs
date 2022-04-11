@@ -1,6 +1,6 @@
 {
 	"name": "use-inputs",
-	"version": "1.0.66",
+	"version": "1.0.67",
 	"description": "useful react hook for handling inputs",
 	"main": "dist/index.js",
 	"license": "ISC",
