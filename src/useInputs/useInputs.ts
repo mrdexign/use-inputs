@@ -18,7 +18,7 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 	const validateInput = (name: string, value: string): boolean => {
 		let isValid = true;
 		const valid = validationOf(name);
-		const inputValue = (value || '')?.trim();
+		const inputValue: string = (value || ('' as string))?.trim?.();
 
 		if (valid?.required) isValid = isValid && inputValue !== '';
 

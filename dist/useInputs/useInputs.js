@@ -23,21 +23,21 @@ var useInputs = function (options) {
         return (__assign(__assign(__assign({}, Validations_1.validation), (_a = options === null || options === void 0 ? void 0 : options.validation) === null || _a === void 0 ? void 0 : _a[name]), (((_c = (_b = options === null || options === void 0 ? void 0 : options.inputs) === null || _b === void 0 ? void 0 : _b[name]) === null || _c === void 0 ? void 0 : _c.validation) || {})));
     };
     var validateInput = function (name, value) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g;
         var isValid = true;
         var valid = validationOf(name);
-        var inputValue = (_a = (value || '')) === null || _a === void 0 ? void 0 : _a.trim();
+        var inputValue = (_b = (_a = (value || '')) === null || _a === void 0 ? void 0 : _a.trim) === null || _b === void 0 ? void 0 : _b.call(_a);
         if (valid === null || valid === void 0 ? void 0 : valid.required)
             isValid = isValid && inputValue !== '';
         if (valid === null || valid === void 0 ? void 0 : valid.validator)
-            isValid = isValid && ((_b = valid === null || valid === void 0 ? void 0 : valid.validator) === null || _b === void 0 ? void 0 : _b.call(valid, inputValue));
+            isValid = isValid && ((_c = valid === null || valid === void 0 ? void 0 : valid.validator) === null || _c === void 0 ? void 0 : _c.call(valid, inputValue));
         if (valid === null || valid === void 0 ? void 0 : valid.regex)
-            isValid = isValid && ((_c = ((valid === null || valid === void 0 ? void 0 : valid.regex) instanceof RegExp ? valid === null || valid === void 0 ? void 0 : valid.regex : constants_1.regex === null || constants_1.regex === void 0 ? void 0 : constants_1.regex[valid === null || valid === void 0 ? void 0 : valid.regex])) === null || _c === void 0 ? void 0 : _c.test(inputValue));
+            isValid = isValid && ((_d = ((valid === null || valid === void 0 ? void 0 : valid.regex) instanceof RegExp ? valid === null || valid === void 0 ? void 0 : valid.regex : constants_1.regex === null || constants_1.regex === void 0 ? void 0 : constants_1.regex[valid === null || valid === void 0 ? void 0 : valid.regex])) === null || _d === void 0 ? void 0 : _d.test(inputValue));
         if (options === null || options === void 0 ? void 0 : options.passwordTuples) {
-            var passTuple = (_d = options === null || options === void 0 ? void 0 : options.passwordTuples) === null || _d === void 0 ? void 0 : _d.find(function (t) { return t === null || t === void 0 ? void 0 : t.includes(name); });
+            var passTuple = (_e = options === null || options === void 0 ? void 0 : options.passwordTuples) === null || _e === void 0 ? void 0 : _e.find(function (t) { return t === null || t === void 0 ? void 0 : t.includes(name); });
             if (passTuple) {
-                var otherName = (_e = passTuple === null || passTuple === void 0 ? void 0 : passTuple.filter(function (n) { return n !== name; })) === null || _e === void 0 ? void 0 : _e[0];
-                var isEquals = ((_f = Inputs === null || Inputs === void 0 ? void 0 : Inputs[otherName]) === null || _f === void 0 ? void 0 : _f.value) === inputValue;
+                var otherName = (_f = passTuple === null || passTuple === void 0 ? void 0 : passTuple.filter(function (n) { return n !== name; })) === null || _f === void 0 ? void 0 : _f[0];
+                var isEquals = ((_g = Inputs === null || Inputs === void 0 ? void 0 : Inputs[otherName]) === null || _g === void 0 ? void 0 : _g.value) === inputValue;
                 if (isDirty(otherName)) {
                     isValid = isValid && isEquals;
                     setInputValidity(otherName, isValid);
