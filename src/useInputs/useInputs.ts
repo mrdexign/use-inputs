@@ -20,8 +20,6 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 		const valid = validationOf(name);
 		const inputValue: string = (value || ('' as string))?.trim?.();
 
-		if (valid?.required) isValid = isValid && inputValue !== '';
-
 		if (valid?.validator) isValid = isValid && valid?.validator?.(inputValue);
 
 		if (valid?.regex) isValid = isValid && (valid?.regex instanceof RegExp ? valid?.regex : regex?.[valid?.regex])?.test(inputValue);
@@ -37,6 +35,10 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 				}
 			}
 		}
+
+		if (valid?.required === true) isValid = isValid && inputValue !== '';
+
+		if (valid?.required === false && inputValue === '') isValid = true;
 
 		return isValid;
 	};

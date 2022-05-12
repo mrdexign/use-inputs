@@ -27,8 +27,6 @@ var useInputs = function (options) {
         var isValid = true;
         var valid = validationOf(name);
         var inputValue = (_b = (_a = (value || '')) === null || _a === void 0 ? void 0 : _a.trim) === null || _b === void 0 ? void 0 : _b.call(_a);
-        if (valid === null || valid === void 0 ? void 0 : valid.required)
-            isValid = isValid && inputValue !== '';
         if (valid === null || valid === void 0 ? void 0 : valid.validator)
             isValid = isValid && ((_c = valid === null || valid === void 0 ? void 0 : valid.validator) === null || _c === void 0 ? void 0 : _c.call(valid, inputValue));
         if (valid === null || valid === void 0 ? void 0 : valid.regex)
@@ -44,6 +42,10 @@ var useInputs = function (options) {
                 }
             }
         }
+        if ((valid === null || valid === void 0 ? void 0 : valid.required) === true)
+            isValid = isValid && inputValue !== '';
+        if ((valid === null || valid === void 0 ? void 0 : valid.required) === false && inputValue === '')
+            isValid = true;
         return isValid;
     };
     //? validity check of all values
