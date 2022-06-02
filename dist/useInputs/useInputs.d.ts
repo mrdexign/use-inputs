@@ -27,6 +27,7 @@ declare const useInputs: <T extends Types.OptionsType>(options?: T | undefined) 
     onInputKeyDown: (callback: InputKeyDownCallbackType, keyCode?: string | undefined) => void;
     onWindowKeyDown: (callback: KeyDownCallbackType, keyCode?: string | undefined) => void;
     getDirtyInputsData: () => any;
+    isDirtyInputsValid: boolean;
     getDefaultInputsData: () => any;
     Data: Record<string, any>;
     setData: import("react").Dispatch<import("react").SetStateAction<Record<string, any>>>;

@@ -18,6 +18,7 @@ var useInputs = function (options) {
     var _a = (0, react_1.useState)({}), Inputs = _a[0], setInputs = _a[1];
     var _b = (0, react_1.useState)({}), Data = _b[0], setData = _b[1];
     var _c = (0, react_1.useState)(false), isInputsValid = _c[0], setIsInputsValid = _c[1];
+    var _d = (0, react_1.useState)(false), isDirtyInputsValid = _d[0], setIsDirtyInputsValid = _d[1];
     var validationOf = function (name) {
         var _a, _b, _c;
         return (__assign(__assign(__assign({}, Validations_1.validation), (_a = options === null || options === void 0 ? void 0 : options.validation) === null || _a === void 0 ? void 0 : _a[name]), (((_c = (_b = options === null || options === void 0 ? void 0 : options.inputs) === null || _b === void 0 ? void 0 : _b[name]) === null || _c === void 0 ? void 0 : _c.validation) || {})));
@@ -50,12 +51,20 @@ var useInputs = function (options) {
     };
     //? validity check of all values
     (0, react_1.useEffect)(function () {
-        return setIsInputsValid(Object.values(Inputs).every(function (i) {
+        var isAllValid = true;
+        var isDirtyValid = true;
+        Object.values(Inputs).forEach(function (i) {
             var _a;
             if (!(i === null || i === void 0 ? void 0 : i.validation) || Object.keys(i === null || i === void 0 ? void 0 : i.validation).length === 0)
-                return true;
-            return !!((_a = i === null || i === void 0 ? void 0 : i.validation) === null || _a === void 0 ? void 0 : _a.isValid);
-        }));
+                return;
+            var isValid = !!((_a = i === null || i === void 0 ? void 0 : i.validation) === null || _a === void 0 ? void 0 : _a.isValid);
+            isAllValid = isAllValid && isValid;
+            if (i === null || i === void 0 ? void 0 : i.dirty)
+                isDirtyValid = isDirtyValid && isValid;
+        });
+        setIsInputsValid(isAllValid);
+        setIsDirtyInputsValid(isDirtyValid);
+        //
     }, [Inputs]);
     //? root onChange
     var onValueChange = (0, react_1.useCallback)(function (name, value, extra) {
@@ -320,6 +329,7 @@ var useInputs = function (options) {
         onInputKeyDown: onInputKeyDown,
         onWindowKeyDown: onWindowKeyDown,
         getDirtyInputsData: getDirtyInputsData,
+        isDirtyInputsValid: isDirtyInputsValid,
         getDefaultInputsData: getDefaultInputsData,
         Data: Data,
         setData: setData,

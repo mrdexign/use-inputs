@@ -7,7 +7,9 @@ import { extraType, InputKeyDownCallbackType, KeyDownCallbackType } from './Type
 const useInputs = <T extends Types.OptionsType>(options?: T) => {
 	const [Inputs, setInputs] = useState<Types.InputsType>({});
 	const [Data, setData] = useState<Record<string, any>>({});
+
 	const [isInputsValid, setIsInputsValid] = useState(false);
+	const [isDirtyInputsValid, setIsDirtyInputsValid] = useState(false);
 
 	const validationOf = (name: string) => ({
 		...validation,
@@ -44,16 +46,21 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 	};
 
 	//? validity check of all values
-	useEffect(
-		() =>
-			setIsInputsValid(
-				Object.values(Inputs).every(i => {
-					if (!i?.validation || Object.keys(i?.validation).length === 0) return true;
-					return !!i?.validation?.isValid;
-				})
-			),
-		[Inputs]
-	);
+	useEffect(() => {
+		let isAllValid = true;
+		let isDirtyValid = true;
+
+		Object.values(Inputs).forEach(i => {
+			if (!i?.validation || Object.keys(i?.validation).length === 0) return;
+			const isValid = !!i?.validation?.isValid;
+			isAllValid = isAllValid && isValid;
+			if (i?.dirty) isDirtyValid = isDirtyValid && isValid;
+		});
+
+		setIsInputsValid(isAllValid);
+		setIsDirtyInputsValid(isDirtyValid);
+		//
+	}, [Inputs]);
 
 	//? root onChange
 	const onValueChange = useCallback(
@@ -349,6 +356,7 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 		onInputKeyDown,
 		onWindowKeyDown,
 		getDirtyInputsData,
+		isDirtyInputsValid,
 		getDefaultInputsData,
 
 		Data,
