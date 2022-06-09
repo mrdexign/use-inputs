@@ -185,6 +185,8 @@ var useInputs = function (options) {
     var defaultValueOf = function (name) { var _a; return (_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.defaultValue; };
     //? get label of an input
     var labelOf = function (name) { var _a, _b, _c; return ((_b = (_a = options === null || options === void 0 ? void 0 : options.inputs) === null || _a === void 0 ? void 0 : _a[name]) === null || _b === void 0 ? void 0 : _b.label) || ((_c = options === null || options === void 0 ? void 0 : options.labels) === null || _c === void 0 ? void 0 : _c[name]) || ''; };
+    //? get label of an input
+    var tabIndexOf = function (name) { var _a; return (_a = options === null || options === void 0 ? void 0 : options.tabIndexes) === null || _a === void 0 ? void 0 : _a[name]; };
     //? return true if any dirty input exist
     var isSomeDirty = Object.values(Inputs).some(function (i) { return i.dirty === true; });
     //? return true if any inputs value changed
@@ -290,20 +292,15 @@ var useInputs = function (options) {
     //? register input element
     //? <input {...register('myInput')} />
     var register = (0, react_1.useCallback)(function (name, extra, isRsuite) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         if (extra === void 0) { extra = {}; }
         if (isRsuite === void 0) { isRsuite = (options === null || options === void 0 ? void 0 : options.isRsuite) || false; }
         var _onChange = function (e) { return onChange(e, extra); };
         if (isRsuite || !!(extra === null || extra === void 0 ? void 0 : extra.isRsuite))
             _onChange = function (value) { return onValueChange(name, value, extra); };
         _initializeInput(name, extra);
-        var registerObj = {
-            name: name,
-            value: ((_a = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _a === void 0 ? void 0 : _a.value) || '',
-            onChange: (_b = extra === null || extra === void 0 ? void 0 : extra.onChange) !== null && _b !== void 0 ? _b : _onChange,
-            onBlur: (_c = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _c !== void 0 ? _c : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); }),
-            onKeyDown: (_d = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _d !== void 0 ? _d : (function (e) { return onInputKeyDownHandler(e, name); }),
-        };
+        var tabIndex = (_a = options === null || options === void 0 ? void 0 : options.tabIndexes) === null || _a === void 0 ? void 0 : _a[name];
+        var registerObj = __assign(__assign({ name: name, value: ((_b = Inputs === null || Inputs === void 0 ? void 0 : Inputs[name]) === null || _b === void 0 ? void 0 : _b.value) || '', onChange: (_c = extra === null || extra === void 0 ? void 0 : extra.onChange) !== null && _c !== void 0 ? _c : _onChange }, (tabIndex !== undefined ? { tabIndex: tabIndex } : {})), { onBlur: (_d = extra === null || extra === void 0 ? void 0 : extra.onBlur) !== null && _d !== void 0 ? _d : (function () { var _a; return !((_a = Inputs[name]) === null || _a === void 0 ? void 0 : _a.dirty) && setDirty(name, true); }), onKeyDown: (_e = extra === null || extra === void 0 ? void 0 : extra.onKeyDown) !== null && _e !== void 0 ? _e : (function (e) { return onInputKeyDownHandler(e, name); }) });
         ['onChange', 'onBlur', 'onKeyDown'].forEach(function (e) { return (extra === null || extra === void 0 ? void 0 : extra[e]) === false && delete registerObj[e]; });
         return registerObj;
     }, [Inputs, onValueChange, options === null || options === void 0 ? void 0 : options.isRsuite]);
@@ -318,6 +315,7 @@ var useInputs = function (options) {
         addExtra: addExtra,
         register: register,
         setInputs: setInputs,
+        tabIndexOf: tabIndexOf,
         resetInputs: resetInputs,
         setAllDirty: setAllDirty,
         isSomeDirty: isSomeDirty,

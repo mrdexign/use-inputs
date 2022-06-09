@@ -193,6 +193,9 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 	//? get label of an input
 	const labelOf = (name: string) => options?.inputs?.[name]?.label || options?.labels?.[name] || '';
 
+	//? get label of an input
+	const tabIndexOf = (name: string) => options?.tabIndexes?.[name];
+
 	//? return true if any dirty input exist
 	const isSomeDirty = Object.values(Inputs).some(i => i.dirty === true);
 
@@ -319,10 +322,13 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 			if (isRsuite || !!extra?.isRsuite) _onChange = (value: string) => onValueChange(name, value, extra);
 			_initializeInput(name, extra);
 
+			const tabIndex = options?.tabIndexes?.[name];
+
 			const registerObj: Record<string, any> = {
 				name,
 				value: Inputs?.[name]?.value || '',
 				onChange: extra?.onChange ?? _onChange,
+				...(tabIndex !== undefined ? { tabIndex } : {}),
 				onBlur: extra?.onBlur ?? (() => !Inputs[name]?.dirty && setDirty(name, true)),
 				onKeyDown: extra?.onKeyDown ?? ((e: KeyboardEvent) => onInputKeyDownHandler(e, name)),
 			};
@@ -345,6 +351,7 @@ const useInputs = <T extends Types.OptionsType>(options?: T) => {
 		addExtra,
 		register,
 		setInputs,
+		tabIndexOf,
 		resetInputs,
 		setAllDirty,
 		isSomeDirty,

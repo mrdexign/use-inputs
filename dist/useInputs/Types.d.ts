@@ -16,6 +16,7 @@ export declare type OptionsType = Record<string, any> & {
     validation?: Validation;
     inputs?: InputConfigType;
     passwordTuples?: [string, string][];
+    tabIndexes?: Record<string, number>;
 };
 export declare type InputType = {
     value: string;

@@ -14,6 +14,7 @@ export type OptionsType = Record<string, any> & {
 	validation?: Validation; //Deprecated
 	inputs?: InputConfigType;
 	passwordTuples?: [string, string][];
+	tabIndexes?: Record<string, number>;
 };
 
 export type InputType = {
